@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "628545463997",
+    "project_id": "rentalsystem-fbb09",
+    "storage_bucket": "rentalsystem-fbb09.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:628545463997:android:fdc125ca04b423918439d4",
+        "android_client_info": {
+          "package_name": "com.example.rent_cruise"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCj3aCoewAnY7XM3GIGWL2b3c7Zq_PjxFk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
