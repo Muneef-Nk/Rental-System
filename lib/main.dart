@@ -9,11 +9,14 @@ import 'package:rent_cruise/controller/saved_screen_controller.dart/saved_contro
 import 'package:rent_cruise/controller/search_controller/search_controller.dart';
 import 'package:rent_cruise/features/authentication/controller/login_controller.dart';
 import 'package:rent_cruise/features/authentication/controller/signup_controller.dart';
+import 'package:rent_cruise/features/cart_screen/provider/card_screen_controller.dart';
 import 'package:rent_cruise/features/profile/controller/profile_controller.dart';
+import 'package:rent_cruise/features/upload_products/provider/upload_product_controller.dart';
 import 'package:rent_cruise/features/welcome_screen/welcome_screen.dart';
 import 'package:rent_cruise/firebase_options.dart';
 import 'package:rent_cruise/model/search_screen.dart/search_item_model.dart';
 import 'package:rent_cruise/service/location_service.dart';
+import 'package:rent_cruise/features/bottom_navigation/bottom_navigation.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -37,6 +40,8 @@ class MyApp extends StatelessWidget {
           ChangeNotifierProvider(create: (context) => LoginScreenController()),
           ChangeNotifierProvider(create: (context) => SignupController()),
           ChangeNotifierProvider(create: (context) => ProfileControllr()),
+          ChangeNotifierProvider(create: (context) => CardScreenController()),
+          ChangeNotifierProvider(create: (context) => UploadProductControllr()),
 
           //--------------
 
@@ -55,6 +60,6 @@ class MyApp extends StatelessWidget {
         child: MaterialApp(
             debugShowCheckedModeBanner: false,
             theme: ThemeData(fontFamily: "poppins"),
-            home: WelcomeScreen()));
+            home: RootScreen()));
   }
 }

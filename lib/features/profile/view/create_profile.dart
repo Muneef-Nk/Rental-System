@@ -5,10 +5,23 @@ import 'package:provider/provider.dart';
 import 'package:rent_cruise/features/profile/controller/profile_controller.dart';
 import 'package:rent_cruise/utils/color_constant.dart/color_constant.dart';
 import 'package:rent_cruise/utils/helper_function/helper_function.dart';
-import 'package:top_snackbar_flutter/custom_snack_bar.dart';
-import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 class CreateProfile extends StatefulWidget {
+  final bool isEdit;
+  final String name;
+  final String email;
+  final String phoneNumber;
+  final String address;
+  final String pic;
+
+  const CreateProfile(
+      {super.key,
+      required this.name,
+      required this.email,
+      required this.phoneNumber,
+      required this.address,
+      required this.pic,
+      required this.isEdit});
   @override
   State<CreateProfile> createState() => _CreateProfileState();
 }
@@ -18,6 +31,17 @@ class _CreateProfileState extends State<CreateProfile> {
   TextEditingController _emailController = TextEditingController();
   TextEditingController _phoneNumberController = TextEditingController();
   TextEditingController _addressController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _nameController.text = widget.name;
+    _phoneNumberController.text = widget.phoneNumber;
+    _emailController.text = widget.email;
+    _addressController.text = widget.address;
+    Provider.of<ProfileControllr>(context, listen: false).profileUrl =
+        widget.pic;
+  }
 
   final _formKey = GlobalKey<FormState>();
 
@@ -158,7 +182,6 @@ class _CreateProfileState extends State<CreateProfile> {
                     }
                     return null;
                   },
-                  autofocus: true,
                   controller: _nameController,
                   textInputAction: TextInputAction.next,
                   decoration: InputDecoration(
@@ -331,14 +354,25 @@ class _CreateProfileState extends State<CreateProfile> {
                   onTap: () {
                     if (_formKey.currentState!.validate()) {
                       if (_emailController.text.contains("@gmail.com")) {
-                        Provider.of<ProfileControllr>(context, listen: false)
-                            .AddProfile(
-                          context: context,
-                          name: _nameController.text,
-                          email: _emailController.text,
-                          phoneNumber: _phoneNumberController.text,
-                          address: _addressController.text,
-                        );
+                        if (widget.isEdit) {
+                          Provider.of<ProfileControllr>(context, listen: false)
+                              .updateProfile(
+                            context: context,
+                            name: _nameController.text,
+                            email: _emailController.text,
+                            phoneNumber: _phoneNumberController.text,
+                            address: _addressController.text,
+                          );
+                        } else {
+                          Provider.of<ProfileControllr>(context, listen: false)
+                              .addProfile(
+                            context: context,
+                            name: _nameController.text,
+                            email: _emailController.text,
+                            phoneNumber: _phoneNumberController.text,
+                            address: _addressController.text,
+                          );
+                        }
                       } else {
                         showSnackBar("Enter valid email address", context);
                       }
@@ -351,13 +385,21 @@ class _CreateProfileState extends State<CreateProfile> {
                         color: ColorConstant.primaryColor,
                         borderRadius: BorderRadius.circular(30)),
                     child: Center(
-                        child: Text(
-                      "Done",
-                      style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold),
-                    )),
+                        child: widget.isEdit
+                            ? Text(
+                                "Update",
+                                style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold),
+                              )
+                            : Text(
+                                "submit",
+                                style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold),
+                              )),
                   ),
                 ),
                 SizedBox(

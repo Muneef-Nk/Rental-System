@@ -30,36 +30,56 @@ class ProfileControllr with ChangeNotifier {
     notifyListeners();
   }
 
-  AddProfile(
+  addProfile(
       {required String name,
       required String email,
       required String phoneNumber,
       required BuildContext context,
       required String address}) async {
-    CollectionReference users = FirebaseFirestore.instance.collection('users');
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     String? uid = await prefs.getString('uid');
 
-    try {
-      await users.add({
-        'image': profileUrl,
-        'name': name,
-        'phoneNumber': phoneNumber,
-        'email': email,
-        'address': address,
-        'uid': uid,
-      });
+    CollectionReference users = FirebaseFirestore.instance.collection('users');
+    users.doc(uid).set({
+      'image': profileUrl,
+      'name': name,
+      'phoneNumber': phoneNumber,
+      'email': email,
+      'address': address,
+      'uid': uid,
+    });
 
-      Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (context) => Homescreen()),
-        (route) => false,
-      );
-      showSnackBar('Profile added', context);
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (context) => Homescreen()),
+      (route) => false,
+    );
+    showSnackBar('Profile added', context);
 
-      notifyListeners();
-    } catch (error) {
-      print("Failed to add user: $error");
-    }
+    notifyListeners();
+  }
+
+  updateProfile(
+      {required String name,
+      required String email,
+      required String phoneNumber,
+      required BuildContext context,
+      required String address}) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? uid = await prefs.getString('uid');
+
+    CollectionReference users = FirebaseFirestore.instance.collection('users');
+
+    users.doc(uid).update({
+      'image': profileUrl,
+      'name': name,
+      'phoneNumber': phoneNumber,
+      'email': email,
+      'address': address,
+      'uid': uid,
+    });
+
+    Navigator.of(context).pop();
+    showSnackBar('Profile updated', context);
 
     notifyListeners();
   }

@@ -106,7 +106,7 @@ class _ProfileState extends State<Profile> {
                       },
                       child: ListTile(
                         trailing: Icon(Icons.arrow_forward),
-                        title: Text("Your Profile"),
+                        title: Text("My Profile"),
                         leading: Container(
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),

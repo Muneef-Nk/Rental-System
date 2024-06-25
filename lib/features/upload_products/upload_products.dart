@@ -1,5 +1,11 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
+import 'package:rent_cruise/features/upload_products/provider/upload_product_controller.dart';
 import 'package:rent_cruise/utils/color_constant.dart/color_constant.dart';
+import 'package:share_plus/share_plus.dart';
 
 class UploadProducts extends StatefulWidget {
   const UploadProducts({super.key});
@@ -9,19 +15,18 @@ class UploadProducts extends StatefulWidget {
 }
 
 class _UploadProductsState extends State<UploadProducts> {
+  TextEditingController _productName = TextEditingController();
+  TextEditingController _description = TextEditingController();
+  TextEditingController _priceController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    Provider.of<UploadProductControllr>(context, listen: false).getCategoris();
+  }
+
   @override
   Widget build(BuildContext context) {
-    String _dropdownvalue = 'Item 1';
-    var _items = [
-      'Item 1',
-      'Item 2',
-      'Item 3',
-      'Item 4',
-      'Item 5',
-    ];
-
-    TextEditingController _productName = TextEditingController();
-    TextEditingController _description = TextEditingController();
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -36,42 +41,41 @@ class _UploadProductsState extends State<UploadProducts> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            SizedBox(
-              height: 20,
-            ),
+            SizedBox(height: 20),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: TextField(
                 controller: _productName,
                 decoration: InputDecoration(
-                    hintMaxLines: 4,
-                    enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10)),
-                    hintText: "Product Name",
-                    border: InputBorder.none),
+                  hintMaxLines: 4,
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  hintText: "Product Name",
+                  border: InputBorder.none,
+                ),
               ),
             ),
-            SizedBox(
-              height: 10,
-            ),
+            SizedBox(height: 10),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: TextField(
                 controller: _description,
                 maxLines: 5,
                 decoration: InputDecoration(
-                    enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10)),
-                    focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.grey.shade300),
-                        borderRadius: BorderRadius.circular(10)),
-                    hintText: "description",
-                    border: InputBorder.none),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey.shade300),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  hintText: "Description",
+                  border: InputBorder.none,
+                ),
               ),
             ),
-            SizedBox(
-              height: 20,
-            ),
+            SizedBox(height: 20),
             Row(
               children: [
                 Expanded(
@@ -79,70 +83,80 @@ class _UploadProductsState extends State<UploadProducts> {
                     margin: EdgeInsets.only(left: 15),
                     height: 60,
                     decoration: BoxDecoration(
-                        color: Colors.white,
-                        boxShadow: [
-                          BoxShadow(
-                              color: Colors.grey.shade300,
-                              spreadRadius: 1,
-                              blurRadius: 10)
-                        ],
-                        borderRadius: BorderRadius.circular(10)),
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.shade300,
+                          spreadRadius: 1,
+                          blurRadius: 10,
+                        )
+                      ],
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                     child: Center(
                       child: Padding(
                         padding: const EdgeInsets.only(left: 20),
                         child: TextField(
-                            keyboardType: TextInputType.number,
-                            maxLength: 4,
-                            decoration: InputDecoration(
-                              counterText: "",
-                              hintText: "Price / day",
-                              border: InputBorder.none,
-                            )),
+                          controller: _priceController,
+                          keyboardType: TextInputType.number,
+                          maxLength: 4,
+                          decoration: InputDecoration(
+                            counterText: "",
+                            hintText: "Price / day",
+                            border: InputBorder.none,
+                          ),
+                        ),
                       ),
                     ),
                   ),
                 ),
-                SizedBox(
-                  width: 10,
-                ),
-                Expanded(
-                  child: Container(
-                      margin: EdgeInsets.only(right: 15),
-                      width: 100,
-                      height: 60,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.shade300,
-                            spreadRadius: 1,
-                            blurRadius: 10,
-                          ),
-                        ],
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Center(
-                        child: DropdownButton(
-                            elevation: 0,
-                            value: _dropdownvalue,
-                            items: _items.map((e) {
-                              return DropdownMenuItem(
-                                value: e,
-                                child: Text(e),
-                              );
-                            }).toList(),
-                            onChanged: (String? newValue) {
-                              setState(() {
-                                _dropdownvalue = newValue!;
-                              });
-                            }),
-                      )),
-                ),
+                SizedBox(width: 10),
               ],
             ),
             SizedBox(
               height: 20,
             ),
+            Consumer<UploadProductControllr>(
+              builder: (context, provider, _) {
+                return Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: Text(
+                        "Category: ",
+                        style: TextStyle(fontSize: 15),
+                      ),
+                    ),
+                    if (provider.items.isNotEmpty)
+                      DropdownButton(
+                        elevation: 0,
+                        value: provider.dropdownvalue,
+                        items: provider.items.map((e) {
+                          return DropdownMenuItem(
+                            value: e,
+                            child: Text(
+                              e,
+                              style: TextStyle(
+                                  fontSize: 15,
+                                  color: ColorConstant.primaryColor,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          );
+                        }).toList(),
+                        onChanged: (String? newValue) {
+                          if (newValue != null) {
+                            Provider.of<UploadProductControllr>(context,
+                                    listen: false)
+                                .setDropdownValue(newValue);
+                          }
+                        },
+                      ),
+                    if (provider.items.isEmpty) Text("No Category"),
+                  ],
+                );
+              },
+            ),
+            SizedBox(height: 20),
             Row(
               children: [
                 Padding(
@@ -154,21 +168,51 @@ class _UploadProductsState extends State<UploadProducts> {
                 ),
               ],
             ),
-            Container(
-              width: 350,
-              height: 200,
-              decoration: BoxDecoration(
-                  color: Colors.black12,
-                  borderRadius: BorderRadius.circular(15)),
-              child: Icon(
-                Icons.add,
-                size: 30,
-                color: Colors.grey[800],
-              ),
-            ),
-            SizedBox(
-              height: 20,
-            ),
+            Consumer<UploadProductControllr>(builder: (context, provider, _) {
+              return provider.mainImageUrl != null
+                  ? Stack(
+                      children: [
+                        Container(
+                          width: 350,
+                          height: 200,
+                          child: Image.network(provider.mainImageUrl ?? ''),
+                        ),
+                        GestureDetector(
+                            onTap: () {
+                              Provider.of<UploadProductControllr>(context,
+                                      listen: false)
+                                  .removeImages(0);
+                            },
+                            child: Icon(Icons.delete_outline)),
+                      ],
+                    )
+                  : GestureDetector(
+                      onTap: () async {
+                        XFile? image = await ImagePicker()
+                            .pickImage(source: ImageSource.camera);
+
+                        if (image != null) {
+                          Provider.of<UploadProductControllr>(context,
+                                  listen: false)
+                              .uploadMainImage(image);
+                        }
+                      },
+                      child: Container(
+                        width: 350,
+                        height: 200,
+                        decoration: BoxDecoration(
+                          color: Colors.black12,
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        child: Icon(
+                          Icons.add,
+                          size: 30,
+                          color: Colors.grey[800],
+                        ),
+                      ),
+                    );
+            }),
+            SizedBox(height: 20),
             Row(
               children: [
                 Padding(
@@ -186,90 +230,251 @@ class _UploadProductsState extends State<UploadProducts> {
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Row(
                   children: [
-                    GestureDetector(
-                      onTap: () {
-                        //
-                      },
-                      child: Container(
-                        width: 100,
-                        height: 100,
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            border: Border.all(color: Colors.grey.shade300),
-                            borderRadius: BorderRadius.circular(15)),
-                        child: Icon(
-                          Icons.add,
-                          size: 40,
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        //
-                      },
-                      child: Container(
-                        width: 100,
-                        height: 100,
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            border: Border.all(color: Colors.grey.shade300),
-                            borderRadius: BorderRadius.circular(15)),
-                        child: Icon(
-                          Icons.add,
-                          size: 40,
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        //
-                      },
-                      child: Container(
-                        width: 100,
-                        height: 100,
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            border: Border.all(color: Colors.grey.shade300),
-                            borderRadius: BorderRadius.circular(15)),
-                        child: Icon(
-                          Icons.add,
-                          size: 40,
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        //
-                      },
-                      child: Container(
-                        width: 100,
-                        height: 100,
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            border: Border.all(color: Colors.grey.shade300),
-                            borderRadius: BorderRadius.circular(15)),
-                        child: Icon(
-                          Icons.add,
-                          size: 40,
-                        ),
-                      ),
-                    ),
+                    Consumer<UploadProductControllr>(
+                        builder: (context, provider, _) {
+                      return provider.athorImage1 != null
+                          ? Stack(
+                              children: [
+                                Container(
+                                    width: 100,
+                                    height: 100,
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      border: Border.all(
+                                          color: Colors.grey.shade300),
+                                      borderRadius: BorderRadius.circular(15),
+                                    ),
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(15),
+                                      child: Image.network(
+                                        provider.athorImage1 ?? '',
+                                        fit: BoxFit.cover,
+                                      ),
+                                    )),
+                                GestureDetector(
+                                    onTap: () {
+                                      Provider.of<UploadProductControllr>(
+                                              context,
+                                              listen: false)
+                                          .removeImages(1);
+                                    },
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Icon(Icons.delete_outline),
+                                    ))
+                              ],
+                            )
+                          : GestureDetector(
+                              onTap: () async {
+                                XFile? image = await ImagePicker()
+                                    .pickImage(source: ImageSource.camera);
+                                if (image != null) {
+                                  Provider.of<UploadProductControllr>(context,
+                                          listen: false)
+                                      .uploadAthorImage1(image);
+                                }
+                              },
+                              child: Container(
+                                  width: 100,
+                                  height: 100,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    border:
+                                        Border.all(color: Colors.grey.shade300),
+                                    borderRadius: BorderRadius.circular(15),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Icon(Icons.add),
+                                  )),
+                            );
+                    }),
+                    SizedBox(width: 10),
+                    Consumer<UploadProductControllr>(
+                        builder: (context, provider, _) {
+                      return provider.athorImage2 == null
+                          ? GestureDetector(
+                              onTap: () async {
+                                XFile? image = await ImagePicker()
+                                    .pickImage(source: ImageSource.camera);
+                                if (image != null) {
+                                  Provider.of<UploadProductControllr>(context,
+                                          listen: false)
+                                      .uploadAthorImage2(image);
+                                }
+                              },
+                              child: Container(
+                                  width: 100,
+                                  height: 100,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    border:
+                                        Border.all(color: Colors.grey.shade300),
+                                    borderRadius: BorderRadius.circular(15),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Icon(Icons.add),
+                                  )),
+                            )
+                          : Stack(
+                              children: [
+                                Container(
+                                    width: 100,
+                                    height: 100,
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      border: Border.all(
+                                          color: Colors.grey.shade300),
+                                      borderRadius: BorderRadius.circular(15),
+                                    ),
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(15),
+                                      child: Image.network(
+                                        provider.athorImage2 ?? '',
+                                        fit: BoxFit.cover,
+                                      ),
+                                    )),
+                                GestureDetector(
+                                    onTap: () {
+                                      Provider.of<UploadProductControllr>(
+                                              context,
+                                              listen: false)
+                                          .removeImages(2);
+                                    },
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Icon(Icons.delete_outline),
+                                    ))
+                              ],
+                            );
+                    }),
+                    SizedBox(width: 10),
+                    Consumer<UploadProductControllr>(
+                        builder: (context, provider, _) {
+                      return provider.athorImage3 == null
+                          ? GestureDetector(
+                              onTap: () async {
+                                XFile? image = await ImagePicker()
+                                    .pickImage(source: ImageSource.camera);
+                                if (image != null) {
+                                  Provider.of<UploadProductControllr>(context,
+                                          listen: false)
+                                      .uploadAthorImage3(image);
+                                }
+                              },
+                              child: Container(
+                                  width: 100,
+                                  height: 100,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    border:
+                                        Border.all(color: Colors.grey.shade300),
+                                    borderRadius: BorderRadius.circular(15),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Icon(Icons.add),
+                                  )),
+                            )
+                          : Stack(
+                              children: [
+                                Container(
+                                    width: 100,
+                                    height: 100,
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      border: Border.all(
+                                          color: Colors.grey.shade300),
+                                      borderRadius: BorderRadius.circular(15),
+                                    ),
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(15),
+                                      child: Image.network(
+                                        provider.athorImage3 ?? '',
+                                        fit: BoxFit.cover,
+                                      ),
+                                    )),
+                                GestureDetector(
+                                    onTap: () {
+                                      Provider.of<UploadProductControllr>(
+                                              context,
+                                              listen: false)
+                                          .removeImages(3);
+                                    },
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Icon(Icons.delete_outline),
+                                    ))
+                              ],
+                            );
+                    }),
+                    SizedBox(width: 10),
+                    Consumer<UploadProductControllr>(
+                        builder: (context, provider, _) {
+                      return provider.athorImage4 == null
+                          ? GestureDetector(
+                              onTap: () async {
+                                XFile? image = await ImagePicker()
+                                    .pickImage(source: ImageSource.camera);
+
+                                if (image != null) {
+                                  Provider.of<UploadProductControllr>(context,
+                                          listen: false)
+                                      .uploadAthorImage4(image);
+                                }
+                              },
+                              child: Container(
+                                  width: 100,
+                                  height: 100,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    border:
+                                        Border.all(color: Colors.grey.shade300),
+                                    borderRadius: BorderRadius.circular(15),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Icon(Icons.add),
+                                  )),
+                            )
+                          : Stack(
+                              children: [
+                                Container(
+                                    width: 100,
+                                    height: 100,
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      border: Border.all(
+                                          color: Colors.grey.shade300),
+                                      borderRadius: BorderRadius.circular(15),
+                                    ),
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(15),
+                                      child: Image.network(
+                                        provider.athorImage4 ?? '',
+                                        fit: BoxFit.cover,
+                                      ),
+                                    )),
+                                GestureDetector(
+                                    onTap: () {
+                                      Provider.of<UploadProductControllr>(
+                                              context,
+                                              listen: false)
+                                          .removeImages(4);
+                                    },
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Icon(Icons.delete_outline),
+                                    ))
+                              ],
+                            );
+                    })
                   ],
                 ),
               ),
             ),
-            SizedBox(
-              height: 30,
-            ),
+            SizedBox(height: 30),
             GestureDetector(
               onTap: () {
                 //
@@ -278,21 +483,22 @@ class _UploadProductsState extends State<UploadProducts> {
                 width: 200,
                 height: 60,
                 decoration: BoxDecoration(
-                    color: ColorConstant.primaryColor,
-                    borderRadius: BorderRadius.circular(30)),
+                  color: ColorConstant.primaryColor,
+                  borderRadius: BorderRadius.circular(30),
+                ),
                 child: Center(
-                    child: Text(
-                  "Upload",
-                  style: TextStyle(
+                  child: Text(
+                    "Upload",
+                    style: TextStyle(
                       color: Colors.white,
                       fontSize: 20,
-                      fontWeight: FontWeight.bold),
-                )),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
               ),
             ),
-            SizedBox(
-              height: 30,
-            ),
+            SizedBox(height: 30),
           ],
         ),
       ),

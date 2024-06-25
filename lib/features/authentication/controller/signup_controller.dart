@@ -30,7 +30,15 @@ class SignupController with ChangeNotifier {
       showSnackBar("Registration successful", context);
 
       Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (context) => CreateProfile()),
+          MaterialPageRoute(
+              builder: (context) => CreateProfile(
+                    address: '',
+                    isEdit: false,
+                    email: '',
+                    name: '',
+                    phoneNumber: '',
+                    pic: '',
+                  )),
           (route) => false);
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {

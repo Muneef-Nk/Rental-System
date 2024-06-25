@@ -93,8 +93,8 @@ class _VerifyCodeState extends State<VerifyCode> {
             onCompleted: (pin) {
               print(pin);
               if (pin == '7777') {
-                Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (context) => CreateProfile()));
+                // Navigator.of(context).pushReplacement(
+                //     MaterialPageRoute(builder: (context) => CreateProfile()));
               }
             },
           ),
