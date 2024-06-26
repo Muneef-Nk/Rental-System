@@ -477,7 +477,11 @@ class _UploadProductsState extends State<UploadProducts> {
             SizedBox(height: 30),
             GestureDetector(
               onTap: () {
-                //
+                Provider.of<UploadProductControllr>(context, listen: false)
+                    .uploadProduct(
+                        name: _productName.text,
+                        des: _description.text,
+                        price: _priceController.text);
               },
               child: Container(
                 width: 200,

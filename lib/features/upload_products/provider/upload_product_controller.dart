@@ -120,4 +120,26 @@ class UploadProductControllr with ChangeNotifier {
     }
     notifyListeners();
   }
+
+  uploadProduct(
+      {required String name, required String des, required String price}) {
+    CollectionReference products =
+        FirebaseFirestore.instance.collection('products');
+
+    products
+        .add({
+          'name': name,
+          'description': des,
+          'price': price,
+          'mainImage': mainImageUrl,
+          'athorImage1': athorImage1,
+          'athorImage2': athorImage2,
+          'athorImage3': athorImage3,
+          'athorImage4': athorImage4
+        })
+        .then((value) => print("User Added"))
+        .catchError((error) => print("Failed to add user: $error"));
+
+    notifyListeners();
+  }
 }

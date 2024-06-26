@@ -1,7 +1,10 @@
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:rent_cruise/controller/home_controller/homecontroller.dart';
 import 'package:rent_cruise/features/profile/view/yourProfile.dart';
@@ -9,6 +12,7 @@ import 'package:rent_cruise/utils/color_constant.dart/color_constant.dart';
 import 'package:rent_cruise/view/Profile/helpCenter.dart';
 import 'package:rent_cruise/view/Profile/privacy.dart';
 import 'package:rent_cruise/features/authentication/view/login_scrren.dart';
+import 'package:rent_cruise/view/home_screen/All_Category.dart';
 import 'package:rent_cruise/view/notification_screen/notification_screen.dart';
 import 'package:rent_cruise/view/search_screen/search_screen.dart';
 import 'package:share_plus/share_plus.dart';
@@ -26,6 +30,13 @@ class _HomescreenState extends State<Homescreen> {
   int activeIndex = 0;
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
+  CollectionReference products =
+      FirebaseFirestore.instance.collection('products');
+
+  CollectionReference category =
+      FirebaseFirestore.instance.collection('categories');
+  CollectionReference banners =
+      FirebaseFirestore.instance.collection('banners');
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<HomeController>(context);
@@ -277,64 +288,64 @@ class _HomescreenState extends State<Homescreen> {
                     ),
                   ),
                   SizedBox(height: 15),
-                  Stack(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: CarouselSlider.builder(
-                          carouselController: buttonCarouselController,
-                          options: CarouselOptions(
-                            height: 200,
-                            aspectRatio: 16 / 9,
-                            viewportFraction: 1,
-                            initialPage: 0,
-                            enableInfiniteScroll: true,
-                            reverse: false,
-                            autoPlay: true,
-                            autoPlayInterval: Duration(seconds: 3),
-                            autoPlayAnimationDuration:
-                                Duration(milliseconds: 800),
-                            autoPlayCurve: Curves.fastOutSlowIn,
-                            enlargeCenterPage: true,
-                            enlargeFactor: 0.3,
-                            scrollDirection: Axis.horizontal,
-                            onPageChanged: (index, reason) {
-                              setState(() {
-                                activeIndex = index;
-                                print(activeIndex);
-                              });
-                            },
-                          ),
-                          itemCount: provider.sliderImages.length,
-                          itemBuilder: (context, index, realIndex) {
-                            final urlImages = provider.sliderImages[index];
-                            return Container(
-                              width: double.infinity,
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(20),
-                                child: Image.asset(
-                                  urlImages,
-                                  fit: BoxFit.fill,
-                                ),
+                  FutureBuilder(
+                      future: banners.get(),
+                      builder: (context, snapshot) {
+                        return Stack(
+                          children: [
+                            CarouselSlider.builder(
+                              carouselController: buttonCarouselController,
+                              options: CarouselOptions(
+                                height: 200,
+                                aspectRatio: 16 / 9,
+                                viewportFraction: 1,
+                                initialPage: 0,
+                                enableInfiniteScroll: true,
+                                reverse: false,
+                                autoPlay: true,
+                                autoPlayInterval: Duration(seconds: 3),
+                                autoPlayAnimationDuration:
+                                    Duration(milliseconds: 800),
+                                autoPlayCurve: Curves.fastOutSlowIn,
+                                enlargeCenterPage: true,
+                                enlargeFactor: 0.3,
+                                scrollDirection: Axis.horizontal,
+                                onPageChanged: (index, reason) {
+                                  setState(() {
+                                    activeIndex = index;
+                                    print(activeIndex);
+                                  });
+                                },
                               ),
-                            );
-                          },
-                        ),
-                      ),
-                      Positioned(
-                        left: 0,
-                        right: 0,
-                        bottom: 20,
-                        child: DotsIndicator(
-                          decorator: DotsDecorator(
-                              activeColor: ColorConstant.primaryColor,
-                              size: Size(20, 10)),
-                          dotsCount: provider.sliderImages.length,
-                          position: activeIndex,
-                        ),
-                      ),
-                    ],
-                  ),
+                              itemCount: snapshot.data!.docs.length,
+                              itemBuilder: (context, index, realIndex) {
+                                DocumentSnapshot banners =
+                                    snapshot.data!.docs[index];
+                                final urlImages = banners['image'];
+                                return Container(
+                                  width: double.infinity,
+                                  child: Image.network(
+                                    urlImages,
+                                    fit: BoxFit.fill,
+                                  ),
+                                );
+                              },
+                            ),
+                            Positioned(
+                              left: 0,
+                              right: 0,
+                              bottom: 20,
+                              child: DotsIndicator(
+                                decorator: DotsDecorator(
+                                    activeColor: ColorConstant.primaryColor,
+                                    size: Size(20, 10)),
+                                dotsCount: provider.sliderImages.length,
+                                position: activeIndex,
+                              ),
+                            ),
+                          ],
+                        );
+                      }),
                   SizedBox(height: 20),
                   Column(
                     children: [
@@ -354,12 +365,12 @@ class _HomescreenState extends State<Homescreen> {
                             Spacer(),
                             InkWell(
                               onTap: () {
-                                //   Navigator.push(
-                                //   context,
-                                //   MaterialPageRoute(
-                                //     builder: (context) => AllCategory(),
-                                //   ),
-                                // );
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => AllCategory(),
+                                  ),
+                                );
                               },
                               child: Text(
                                 "See All",
@@ -373,45 +384,57 @@ class _HomescreenState extends State<Homescreen> {
                           ],
                         ),
                       ),
-                      SizedBox(
-                        height: 120,
-                        child: ListView.builder(
-                          itemCount: 10,
-                          scrollDirection: Axis.horizontal,
-                          itemBuilder: (context, index) {
-                            return GestureDetector(
-                              onTap: () {
-                                // Navigator.of(context).push(MaterialPageRoute(
-                                //     builder: (context) => SelectedCategory(
-                                //           selectedIndex: index,
-                                //         )));
-                              },
-                              child: Container(
-                                width: 100,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    CircleAvatar(
-                                      radius: 38,
-                                      backgroundImage: AssetImage(''),
-                                    ),
-                                    SizedBox(height: 8),
-                                    Text(
-                                      'nnk',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 10,
-                                        color: ColorConstant.primaryColor,
+                      FutureBuilder(
+                          future: category.get(),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              return SizedBox(
+                                height: 120,
+                                child: ListView.builder(
+                                  itemCount: snapshot.data!.docs.length,
+                                  scrollDirection: Axis.horizontal,
+                                  itemBuilder: (context, index) {
+                                    DocumentSnapshot category =
+                                        snapshot.data!.docs[index];
+                                    return GestureDetector(
+                                      onTap: () {
+                                        // Navigator.of(context).push(MaterialPageRoute(
+                                        //     builder: (context) => SelectedCategory(
+                                        //           selectedIndex: index,
+                                        //         )));
+                                      },
+                                      child: Container(
+                                        width: 100,
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            CircleAvatar(
+                                              radius: 38,
+                                              backgroundImage: NetworkImage(
+                                                  category['image']),
+                                            ),
+                                            SizedBox(height: 8),
+                                            Text(
+                                              '${category["name"]}',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 12,
+                                                color:
+                                                    ColorConstant.primaryColor,
+                                              ),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                          ],
+                                        ),
                                       ),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ],
+                                    );
+                                  },
                                 ),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
+                              );
+                            }
+                            return Text("");
+                          }),
                     ],
                   )
                 ],
@@ -424,7 +447,7 @@ class _HomescreenState extends State<Homescreen> {
                   Padding(
                     padding: const EdgeInsets.only(left: 10),
                     child: Text(
-                      "Flash Rent",
+                      "Flash Rents",
                       style: TextStyle(
                           color: ColorConstant.primaryColor,
                           fontWeight: FontWeight.bold,
@@ -433,20 +456,96 @@ class _HomescreenState extends State<Homescreen> {
                   ),
                 ],
               ),
-              Container(
-                padding: EdgeInsets.all(9),
-                child: GridView.builder(
-                  itemCount: 10,
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisSpacing: 10,
-                      mainAxisSpacing: 20,
-                      mainAxisExtent: MediaQuery.sizeOf(context).height * .43,
-                      crossAxisCount: 2),
-                  itemBuilder: (context, index) => Text("njnj"),
-                ),
-              ),
+              FutureBuilder(
+                  future: products.get(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      return Container(
+                        padding: EdgeInsets.all(9),
+                        child: GridView.builder(
+                          itemCount: snapshot.data?.docs.length,
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisSpacing: 10,
+                                  mainAxisSpacing: 20,
+                                  mainAxisExtent:
+                                      MediaQuery.sizeOf(context).height * .3,
+                                  crossAxisCount: 2),
+                          itemBuilder: (context, index) {
+                            DocumentSnapshot product =
+                                snapshot.data!.docs[index];
+
+                            return Container(
+                                width: double.infinity,
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    color: Colors.black12),
+                                child: Column(
+                                  children: [
+                                    Stack(
+                                      children: [
+                                        ClipRRect(
+                                          borderRadius: BorderRadius.only(
+                                              topLeft: Radius.circular(10),
+                                              topRight: Radius.circular(10)),
+                                          child: Image.network(
+                                            product['mainImage'],
+                                            height: 150,
+                                            fit: BoxFit.cover,
+                                            width: double.infinity,
+                                          ),
+                                        ),
+                                        Align(
+                                          alignment: Alignment.topRight,
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Icon(
+                                              Icons.bookmark_outline,
+                                              size: 28,
+                                            ),
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                    Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Text(
+                                            "${product['name']}",
+                                            style: TextStyle(fontSize: 15),
+                                          ),
+                                        )),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 9),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            "\$${product['price']}",
+                                            style: TextStyle(
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                          Icon(
+                                            Icons.shopping_cart_outlined,
+                                            size: 25,
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ));
+                          },
+                        ),
+                      );
+                    }
+                    return CircularProgressIndicator();
+                  }),
             ],
           ),
         ),
