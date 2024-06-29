@@ -1,11 +1,8 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:rent_cruise/features/upload_products/provider/upload_product_controller.dart';
 import 'package:rent_cruise/utils/color_constant.dart/color_constant.dart';
-import 'package:share_plus/share_plus.dart';
 
 class UploadProducts extends StatefulWidget {
   const UploadProducts({super.key});
@@ -479,6 +476,7 @@ class _UploadProductsState extends State<UploadProducts> {
               onTap: () {
                 Provider.of<UploadProductControllr>(context, listen: false)
                     .uploadProduct(
+                        context: context,
                         name: _productName.text,
                         des: _description.text,
                         price: _priceController.text);

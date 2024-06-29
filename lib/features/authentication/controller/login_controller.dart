@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:rent_cruise/view/home_screen/home_screen.dart';
+import 'package:rent_cruise/features/home_screen/home_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../utils/helper_function/helper_function.dart';

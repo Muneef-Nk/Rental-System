@@ -5,7 +5,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:rent_cruise/utils/helper_function/helper_function.dart';
-import 'package:rent_cruise/view/home_screen/home_screen.dart';
+import 'package:rent_cruise/features/home_screen/home_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileControllr with ChangeNotifier {

@@ -4,19 +4,19 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:rent_cruise/controller/add_card/add_card_controller.dart';
 import 'package:rent_cruise/controller/checkout_controller/checkout_controller.dart';
-import 'package:rent_cruise/controller/home_controller/homecontroller.dart';
 import 'package:rent_cruise/controller/saved_screen_controller.dart/saved_controller.dart';
 import 'package:rent_cruise/controller/search_controller/search_controller.dart';
 import 'package:rent_cruise/features/authentication/controller/login_controller.dart';
 import 'package:rent_cruise/features/authentication/controller/signup_controller.dart';
+import 'package:rent_cruise/features/bottom_navigation/bottom_navigation.dart';
 import 'package:rent_cruise/features/cart_screen/provider/card_screen_controller.dart';
+import 'package:rent_cruise/features/home_screen/provider/homecontroller.dart';
+import 'package:rent_cruise/features/product_detail_screen/controller/details_screen_controller.dart';
 import 'package:rent_cruise/features/profile/controller/profile_controller.dart';
 import 'package:rent_cruise/features/upload_products/provider/upload_product_controller.dart';
-import 'package:rent_cruise/features/welcome_screen/welcome_screen.dart';
 import 'package:rent_cruise/firebase_options.dart';
 import 'package:rent_cruise/model/search_screen.dart/search_item_model.dart';
 import 'package:rent_cruise/service/location_service.dart';
-import 'package:rent_cruise/features/bottom_navigation/bottom_navigation.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -42,6 +42,8 @@ class MyApp extends StatelessWidget {
           ChangeNotifierProvider(create: (context) => ProfileControllr()),
           ChangeNotifierProvider(create: (context) => CardScreenController()),
           ChangeNotifierProvider(create: (context) => UploadProductControllr()),
+          ChangeNotifierProvider(
+              create: (context) => ProductDetailsController()),
 
           //--------------
 

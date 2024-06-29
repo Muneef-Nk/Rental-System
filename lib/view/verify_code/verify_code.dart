@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:pinput/pinput.dart';
-import 'package:rent_cruise/features/profile/view/create_profile.dart';
 import 'package:rent_cruise/utils/color_constant.dart/color_constant.dart';
 
 class VerifyCode extends StatefulWidget {

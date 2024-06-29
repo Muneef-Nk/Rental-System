@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class UploadProductControllr with ChangeNotifier {
   String dropdownvalue = 'Select Category';
@@ -122,23 +123,43 @@ class UploadProductControllr with ChangeNotifier {
   }
 
   uploadProduct(
-      {required String name, required String des, required String price}) {
+      {required String name,
+      required String des,
+      required BuildContext context,
+      required String price}) async {
     CollectionReference products =
         FirebaseFirestore.instance.collection('products');
 
-    products
-        .add({
-          'name': name,
-          'description': des,
-          'price': price,
-          'mainImage': mainImageUrl,
-          'athorImage1': athorImage1,
-          'athorImage2': athorImage2,
-          'athorImage3': athorImage3,
-          'athorImage4': athorImage4
-        })
-        .then((value) => print("User Added"))
-        .catchError((error) => print("Failed to add user: $error"));
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    var uid = await prefs.getString('uid');
+
+    products.add({
+      'name': name,
+      'description': des,
+      'price': price,
+      'mainImage': mainImageUrl,
+      'athorImage1': athorImage1,
+      'athorImage2': athorImage2,
+      'athorImage3': athorImage3,
+      'athorImage4': athorImage4,
+      'category': dropdownvalue,
+      'userId': uid,
+      'lat': 0,
+      'long': 0,
+    }).then((value) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text("product added")));
+
+      mainImageUrl = '';
+      athorImage1 = '';
+      athorImage2 = '';
+      athorImage3 = '';
+      athorImage4 = '';
+
+      dropdownvalue = 'Select Category';
+
+      notifyListeners();
+    });
 
     notifyListeners();
   }
