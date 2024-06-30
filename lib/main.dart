@@ -10,7 +10,9 @@ import 'package:rent_cruise/features/authentication/controller/login_controller.
 import 'package:rent_cruise/features/authentication/controller/signup_controller.dart';
 import 'package:rent_cruise/features/bottom_navigation/bottom_navigation.dart';
 import 'package:rent_cruise/features/cart_screen/provider/card_screen_controller.dart';
+import 'package:rent_cruise/features/category/provider/category_controller.dart';
 import 'package:rent_cruise/features/home_screen/provider/homecontroller.dart';
+import 'package:rent_cruise/features/my_products/provider/my_products_controller.dart';
 import 'package:rent_cruise/features/product_detail_screen/controller/details_screen_controller.dart';
 import 'package:rent_cruise/features/profile/controller/profile_controller.dart';
 import 'package:rent_cruise/features/upload_products/provider/upload_product_controller.dart';
@@ -27,7 +29,9 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  runApp(MyApp());
+  runApp(
+    MyApp(),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -42,6 +46,8 @@ class MyApp extends StatelessWidget {
           ChangeNotifierProvider(create: (context) => ProfileControllr()),
           ChangeNotifierProvider(create: (context) => CardScreenController()),
           ChangeNotifierProvider(create: (context) => UploadProductControllr()),
+          ChangeNotifierProvider(create: (context) => CategoryController()),
+          ChangeNotifierProvider(create: (context) => MyProductsController()),
           ChangeNotifierProvider(
               create: (context) => ProductDetailsController()),
 

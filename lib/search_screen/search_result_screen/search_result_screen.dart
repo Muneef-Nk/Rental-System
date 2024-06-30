@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:rent_cruise/view/search_screen/search_result_screen/search_card/search_card.dart';
+import 'package:rent_cruise/search_screen/search_result_screen/search_card/search_card.dart';
 
 class search_result_screen extends StatefulWidget {
   const search_result_screen({super.key});

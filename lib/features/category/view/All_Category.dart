@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:rent_cruise/features/category/view/selected_category.dart';
 
 class AllCategory extends StatefulWidget {
   const AllCategory({super.key});
@@ -39,7 +40,6 @@ class _AllCategoryState extends State<AllCategory> {
               return GridView.builder(
                   itemCount: 4,
                   shrinkWrap: true,
-                  // physics: NeverScrollableScrollPhysics(),
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       mainAxisExtent: 230, crossAxisCount: 2),
                   itemBuilder: (context, index) {
@@ -51,10 +51,10 @@ class _AllCategoryState extends State<AllCategory> {
                         children: [
                           GestureDetector(
                             onTap: () {
-                              // Navigator.of(context).push(MaterialPageRoute(
-                              //     builder: (context) => SelectedCategory(
-                              //           selectedIndex: index,
-                              //         )));
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => SelectedCategory(
+                                        category: category['name'],
+                                      )));
                             },
                             child: Container(
                               height: 150,

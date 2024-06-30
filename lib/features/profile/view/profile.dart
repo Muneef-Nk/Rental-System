@@ -1,16 +1,12 @@
-import 'dart:io';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:rent_cruise/features/authentication/view/login_scrren.dart';
+import 'package:rent_cruise/features/my_products/view/my_products.dart';
 import 'package:rent_cruise/features/profile/view/yourProfile.dart';
 import 'package:rent_cruise/shared/pages/payment_methods_screen/payment_methods_screen.dart';
-import 'package:rent_cruise/view/Profile/helpCenter.dart';
-import 'package:rent_cruise/view/Profile/privacy.dart';
-import 'package:rent_cruise/view/Profile/settings.dart';
-
 import 'package:share_plus/share_plus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Profile extends StatefulWidget {
   const Profile({Key? key, this.isBack = false});
@@ -21,21 +17,28 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
-  XFile? selectedImage;
+  @override
+  void initState() {
+    getUid();
+    super.initState();
+  }
+
+  String? uid;
+
+  Future<void> getUid() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      uid = prefs.getString('uid');
+    });
+  }
+
+  CollectionReference users = FirebaseFirestore.instance.collection('users');
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
-        leading: IconButton(
-            onPressed: () {
-              widget.isBack ? Navigator.of(context).pop() : SizedBox();
-            },
-            icon: Icon(
-              Icons.arrow_back,
-              color: Colors.black,
-            )),
         backgroundColor: Colors.white,
         centerTitle: true,
         title: Text(
@@ -54,35 +57,105 @@ class _ProfileState extends State<Profile> {
                   child: Center(
                     child: Stack(
                       children: [
-                        Container(
-                          height: MediaQuery.sizeOf(context).height * 0.15,
-                          width: MediaQuery.sizeOf(context).width * 0.3,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            image: DecorationImage(
-                              image: selectedImage != null
-                                  ? FileImage(File(selectedImage!.path))
-                                      as ImageProvider<Object>
-                                  : NetworkImage(
-                                      "https://imgs.search.brave.com/bHpTjt49BE6IN6GPjmIm4FaNZXFj4xFH3ey8KXtPew0/rs:fit:860:0:0/g:ce/aHR0cHM6Ly93d3cu/dzNzY2hvb2xzLmNv/bS9ob3d0by9pbWdf/YXZhdGFyLnBuZw"),
-                              fit: BoxFit.fill,
-                            ),
-                          ),
+                        FutureBuilder<DocumentSnapshot>(
+                          future: users.doc(uid).get(),
+                          builder: (context,
+                              AsyncSnapshot<DocumentSnapshot> snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return Center(child: CircularProgressIndicator());
+                            }
+                            if (snapshot.hasError) {
+                              return Center(
+                                  child: Text('Error: ${snapshot.error}'));
+                            }
+                            if (!snapshot.hasData || !snapshot.data!.exists) {
+                              // Handle case where document does not exist
+                              return Column(
+                                children: [
+                                  Container(
+                                    height: MediaQuery.of(context).size.height *
+                                        0.15,
+                                    width:
+                                        MediaQuery.of(context).size.width * 0.3,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      image: DecorationImage(
+                                        image: NetworkImage(
+                                            "https://imgs.search.brave.com/bHpTjt49BE6IN6GPjmIm4FaNZXFj4xFH3ey8KXtPew0/rs:fit:860:0:0/g:ce/aHR0cHM6Ly93d3cu/dzNzY2hvb2xzLmNv/bS9ob3d0by9pbWdf/YXZhdGFyLnBuZw"),
+                                        fit: BoxFit.fill,
+                                      ),
+                                    ),
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.only(top: 10),
+                                        child: Text(
+                                          "Unknown",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              );
+                            }
+                            // Document exists, check if 'image' field exists
+                            var imageUrl = snapshot.data!.get('image');
+                            if (imageUrl != null && imageUrl.isNotEmpty) {
+                              return Column(
+                                children: [
+                                  Container(
+                                    height: MediaQuery.of(context).size.height *
+                                        0.15,
+                                    width:
+                                        MediaQuery.of(context).size.width * 0.3,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      image: DecorationImage(
+                                        image: NetworkImage(imageUrl),
+                                        fit: BoxFit.fill,
+                                      ),
+                                    ),
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.only(top: 10),
+                                        child: Text(
+                                          "${snapshot.data?['name']}",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              );
+                            } else {
+                              // Handle case where 'image' field is empty or null
+                              return Container(
+                                height:
+                                    MediaQuery.of(context).size.height * 0.15,
+                                width: MediaQuery.of(context).size.width * 0.3,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  image: DecorationImage(
+                                    image: NetworkImage(
+                                        "https://imgs.search.brave.com/bHpTjt49BE6IN6GPjmIm4FaNZXFj4xFH3ey8KXtPew0/rs:fit:860:0:0/g:ce/aHR0cHM6Ly93d3cu/dzNzY2hvb2xzLmNv/bS9ob3d0by9pbWdf/YXZhdGFyLnBuZw"),
+                                    fit: BoxFit.fill,
+                                  ),
+                                ),
+                              );
+                            }
+                          },
                         ),
                       ],
                     ),
-                  ),
-                ),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 10),
-                  child: Text(
-                    "Muneef",
-                    style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ),
               ],
@@ -151,12 +224,12 @@ class _ProfileState extends State<Profile> {
                     Divider(),
                     GestureDetector(
                       onTap: () {
-                        // Navigator.of(context).push(MaterialPageRoute(
-                        //     builder: (context) => order_screen()));
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => MyProductsScreeen()));
                       },
                       child: ListTile(
                         trailing: Icon(Icons.arrow_forward),
-                        title: Text("My Orders"),
+                        title: Text("My Products"),
                         leading: Container(
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),
@@ -166,86 +239,6 @@ class _ProfileState extends State<Profile> {
                           width: 40,
                           child: Icon(
                             Icons.tab,
-                            size: 18,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ),
-                    Divider(),
-                    InkWell(
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => Settings(),
-                            ));
-                      },
-                      child: ListTile(
-                        trailing: Icon(Icons.arrow_forward),
-                        title: Text("Settings"),
-                        leading: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: Color.fromARGB(255, 179, 238, 112),
-                          ),
-                          height: 40,
-                          width: 40,
-                          child: Icon(
-                            Icons.settings,
-                            size: 18,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ),
-                    Divider(),
-                    InkWell(
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => HelpCenter(),
-                            ));
-                      },
-                      child: ListTile(
-                        trailing: Icon(Icons.arrow_forward),
-                        title: Text("Help Center"),
-                        leading: Container(
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: Colors.amber),
-                          height: 40,
-                          width: 40,
-                          child: Icon(
-                            Icons.help,
-                            size: 18,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ),
-                    Divider(),
-                    InkWell(
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => PrivacyPolicy(),
-                            ));
-                      },
-                      child: ListTile(
-                        trailing: Icon(Icons.arrow_forward),
-                        title: Text("Privacy Policy"),
-                        leading: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: Color.fromARGB(255, 91, 232, 150),
-                          ),
-                          height: 40,
-                          width: 40,
-                          child: Icon(
-                            Icons.lock,
                             size: 18,
                             color: Colors.white,
                           ),
@@ -281,11 +274,11 @@ class _ProfileState extends State<Profile> {
                     Divider(),
                     InkWell(
                       onTap: () async {
-                        await FirebaseAuth.instance.signOut();
-                        Navigator.of(context).pushAndRemoveUntil(
-                            MaterialPageRoute(
-                                builder: (context) => LoginScreen()),
-                            (route) => false);
+                        await FirebaseAuth.instance.signOut().then((value) =>
+                            Navigator.of(context).pushAndRemoveUntil(
+                                MaterialPageRoute(
+                                    builder: (context) => LoginScreen()),
+                                (route) => false));
                       },
                       child: ListTile(
                         trailing: Icon(Icons.arrow_forward),
@@ -312,16 +305,5 @@ class _ProfileState extends State<Profile> {
         ),
       ),
     );
-  }
-
-  Future<void> pickImageFromGallery() async {
-    final pickedImage =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
-
-    if (pickedImage != null) {
-      setState(() {
-        selectedImage = XFile(pickedImage.path);
-      });
-    }
   }
 }

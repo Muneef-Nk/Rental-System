@@ -2,9 +2,9 @@ import 'package:circle_nav_bar/circle_nav_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:rent_cruise/features/cart_screen/view/cart_screen.dart';
 import 'package:rent_cruise/features/chat_screen/chat_screen.dart';
-import 'package:rent_cruise/features/home_screen/home_screen.dart';
+import 'package:rent_cruise/features/home_screen/view/home_screen.dart';
 import 'package:rent_cruise/features/profile/view/profile.dart';
-import 'package:rent_cruise/features/upload_products/upload_products.dart';
+import 'package:rent_cruise/features/upload_products/view/upload_products.dart';
 import 'package:rent_cruise/utils/color_constant.dart/color_constant.dart';
 
 class RootScreen extends StatefulWidget {
@@ -19,7 +19,9 @@ class _RootScreenState extends State<RootScreen> {
   List screens = [
     Homescreen(),
     ChatScreen(),
-    UploadProducts(),
+    UploadProducts(
+      idEdit: false,
+    ),
     CartScreen(),
     Profile()
   ];

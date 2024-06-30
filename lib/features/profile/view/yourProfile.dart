@@ -30,9 +30,10 @@ class _YourProfileState extends State<YourProfile> {
     });
   }
 
+  CollectionReference users = FirebaseFirestore.instance.collection('users');
+
   @override
   Widget build(BuildContext context) {
-    CollectionReference users = FirebaseFirestore.instance.collection('users');
     var data;
     return Scaffold(
       appBar: AppBar(

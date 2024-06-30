@@ -21,7 +21,6 @@ class ProductDetailsController with ChangeNotifier {
 
   timeUnitChange(String value) {
     selectedTimeUnit = value;
-    notifyListeners();
   }
 
   resetValues() {
@@ -29,7 +28,6 @@ class ProductDetailsController with ChangeNotifier {
     totalDays = 1;
     selectedNumber = 1;
     selectedTimeUnit = 'days';
-    notifyListeners();
   }
 
   int calculateTotalDays() {

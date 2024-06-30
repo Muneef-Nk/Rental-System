@@ -24,18 +24,17 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
       FirebaseFirestore.instance.collection('products');
   CollectionReference users = FirebaseFirestore.instance.collection('users');
   var uid;
-
   @override
   void initState() {
     super.initState();
+    fetchData();
     getUid();
   }
 
   getUid() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     uid = prefs.getString('uid');
-    setState(() {});
-    fetchData();
+    setState(() {}); // This should be safe now
   }
 
   fetchData() {
@@ -58,19 +57,24 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                   future: products.doc(widget.documentId).get(),
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
-                      detailController.price = double.tryParse(
-                              snapshot.data?['price'].toString() ?? '0') ??
-                          0;
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        setState(() {
+                          detailController.price = double.tryParse(
+                                  snapshot.data?['price'].toString() ?? '0') ??
+                              0;
 
-                      detailController.lat = double.tryParse(
-                              snapshot.data?['lat'].toString() ?? '0') ??
-                          0;
-                      detailController.long = double.tryParse(
-                              snapshot.data?['long'].toString() ?? '0') ??
-                          0;
+                          detailController.lat = double.tryParse(
+                                  snapshot.data?['lat'].toString() ?? '0') ??
+                              0;
+                          detailController.long = double.tryParse(
+                                  snapshot.data?['long'].toString() ?? '0') ??
+                              0;
 
-                      detailController.totalPriceCalc(detailController.price);
-
+                          // Call totalPriceCalc after price has been set
+                          detailController
+                              .totalPriceCalc(detailController.price);
+                        });
+                      });
                       return Column(
                         children: [
                           Stack(
@@ -239,74 +243,73 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
               FutureBuilder(
                   future: users.doc(uid).get(),
                   builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.done) {
-                      if (snapshot.hasData) {
-                        return ListTile(
-                          leading: CircleAvatar(
-                              radius: 26,
-                              backgroundImage: NetworkImage(
-                                snapshot.data?['image'],
-                              )),
-                          title: Text(
-                            snapshot.data?['name'],
-                            style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black),
-                          ),
-                          subtitle: Text(
-                            snapshot.data?['email'],
-                            style: TextStyle(color: Colors.grey),
-                          ),
-                          trailing: Container(
-                            width: 90,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                GestureDetector(
-                                  onTap: () {
-                                    //
-                                  },
-                                  child: Container(
-                                    width: 40,
-                                    height: 40,
-                                    decoration: BoxDecoration(
-                                        color: Colors.grey[300],
-                                        borderRadius:
-                                            BorderRadius.circular(10)),
-                                    child: IconButton(
-                                        onPressed: () {},
-                                        icon: Image.asset(
-                                            "assets/icons/whatsapp.png")),
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 10,
-                                ),
-                                Container(
+                    if (snapshot.hasData) {
+                      return ListTile(
+                        leading: CircleAvatar(
+                            radius: 26,
+                            backgroundImage: NetworkImage(
+                              snapshot.data?['image'],
+                            )),
+                        title: Text(
+                          snapshot.data?['name'],
+                          style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black),
+                        ),
+                        subtitle: Text(
+                          snapshot.data?['email'],
+                          style: TextStyle(color: Colors.grey),
+                        ),
+                        trailing: Container(
+                          width: 90,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  //
+                                },
+                                child: Container(
                                   width: 40,
                                   height: 40,
                                   decoration: BoxDecoration(
                                       color: Colors.grey[300],
                                       borderRadius: BorderRadius.circular(10)),
                                   child: IconButton(
-                                      onPressed: () {
-                                        var number =
-                                            snapshot.data?['phoneNumber'];
-                                        final url = Uri.parse('tel:+91$number');
-                                        print(url);
-                                        launchUrl(url);
-                                      },
-                                      icon: Icon(
-                                        Icons.call,
-                                        color: Colors.blue,
-                                      )),
+                                      onPressed: () {},
+                                      icon: Image.asset(
+                                          "assets/icons/whatsapp.png")),
                                 ),
-                              ],
-                            ),
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              Container(
+                                width: 40,
+                                height: 40,
+                                decoration: BoxDecoration(
+                                    color: Colors.grey[300],
+                                    borderRadius: BorderRadius.circular(10)),
+                                child: IconButton(
+                                    onPressed: () {
+                                      var number =
+                                          snapshot.data?['phoneNumber'];
+                                      final url = Uri.parse('tel:+91$number');
+                                      print(url);
+                                      launchUrl(url);
+                                    },
+                                    icon: Icon(
+                                      Icons.call,
+                                      color: Colors.blue,
+                                    )),
+                              ),
+                            ],
                           ),
-                        );
-                      }
+                        ),
+                      );
+                    } else if (snapshot.hasError) {
+                      return Text("error");
                     }
 
                     return CircularProgressIndicator();

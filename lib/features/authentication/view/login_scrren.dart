@@ -5,7 +5,7 @@ import 'package:rent_cruise/features/authentication/view/signup_screen.dart';
 import 'package:rent_cruise/features/authentication/widgets/login_bottom.dart';
 import 'package:rent_cruise/features/authentication/widgets/social_container.dart';
 import 'package:rent_cruise/utils/color_constant.dart/color_constant.dart';
-import 'package:rent_cruise/view/forgot_password_screen/forgot_password_screen.dart';
+import 'package:rent_cruise/forgot_password_screen/forgot_password_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   LoginScreen({super.key});

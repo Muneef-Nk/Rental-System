@@ -1,20 +1,19 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dots_indicator/dots_indicator.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
-import 'package:rent_cruise/features/authentication/view/login_scrren.dart';
-import 'package:rent_cruise/features/home_screen/All_Category.dart';
+import 'package:rent_cruise/features/category/view/All_Category.dart';
+import 'package:rent_cruise/features/category/view/selected_category.dart';
 import 'package:rent_cruise/features/home_screen/provider/homecontroller.dart';
-import 'package:rent_cruise/features/product_detail_screen/product_detail_screen.dart';
-import 'package:rent_cruise/features/profile/view/yourProfile.dart';
+import 'package:rent_cruise/features/home_screen/widgets/drawer.dart';
+import 'package:rent_cruise/features/notification_screen/notification_screen.dart';
+import 'package:rent_cruise/features/product_detail_screen/view/product_detail_screen.dart';
+import 'package:rent_cruise/search_screen/search_screen.dart';
 import 'package:rent_cruise/utils/color_constant.dart/color_constant.dart';
-import 'package:rent_cruise/view/Profile/helpCenter.dart';
-import 'package:rent_cruise/view/Profile/privacy.dart';
-import 'package:rent_cruise/view/notification_screen/notification_screen.dart';
-import 'package:rent_cruise/view/search_screen/search_screen.dart';
-import 'package:share_plus/share_plus.dart';
+import 'package:shimmer/shimmer.dart';
 
 class Homescreen extends StatefulWidget {
   const Homescreen({super.key});
@@ -47,7 +46,6 @@ class _HomescreenState extends State<Homescreen> {
           leading: GestureDetector(
             onTap: () {
               scaffoldKey.currentState!.openDrawer();
-              // Scaffold.of(context).openDrawer();
             },
             child: Icon(
               Icons.menu,
@@ -57,10 +55,10 @@ class _HomescreenState extends State<Homescreen> {
           backgroundColor: Colors.white,
           elevation: 0,
           title: Text(
-            "Urban Lease",
+            "Rental System",
             style: TextStyle(
                 color: ColorConstant.primaryColor,
-                fontSize: 25,
+                fontSize: 20,
                 fontWeight: FontWeight.bold),
           ),
           actions: [
@@ -210,7 +208,17 @@ class _HomescreenState extends State<Homescreen> {
                             ],
                           );
                         }
-                        return CircularProgressIndicator();
+                        return Shimmer.fromColors(
+                          baseColor: Color.fromARGB(255, 233, 233, 233),
+                          highlightColor: Colors.white,
+                          child: Container(
+                            width: double.infinity,
+                            height: 200,
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(0)),
+                          ),
+                        );
                       }),
                   SizedBox(height: 20),
                   Column(
@@ -264,10 +272,13 @@ class _HomescreenState extends State<Homescreen> {
                                         snapshot.data!.docs[index];
                                     return GestureDetector(
                                       onTap: () {
-                                        Provider.of<HomeController>(context,
-                                                listen: false)
-                                            .getProductFromCategory(
-                                                category['name']);
+                                        Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    SelectedCategory(
+                                                      category:
+                                                          category['name'],
+                                                    )));
                                       },
                                       child: Container(
                                         width: 100,
@@ -299,7 +310,32 @@ class _HomescreenState extends State<Homescreen> {
                                 ),
                               );
                             }
-                            return CircularProgressIndicator();
+                            return SizedBox(
+                              height: 120,
+                              child: ListView.separated(
+                                itemCount: 10,
+                                scrollDirection: Axis.horizontal,
+                                padding: EdgeInsets.symmetric(horizontal: 10),
+                                separatorBuilder: (context, index) => SizedBox(
+                                  width: 10,
+                                ),
+                                itemBuilder: (context, index) {
+                                  return Shimmer.fromColors(
+                                    baseColor:
+                                        Color.fromARGB(255, 233, 233, 233),
+                                    highlightColor: Colors.white,
+                                    child: Container(
+                                      width: 60,
+                                      height: 60,
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        shape: BoxShape.circle,
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            );
                           }),
                     ],
                   )
@@ -420,156 +456,112 @@ class _HomescreenState extends State<Homescreen> {
                         ),
                       );
                     }
-                    return CircularProgressIndicator();
+                    return Container(
+                        padding: EdgeInsets.all(9),
+                        child: GridView.builder(
+                          itemCount: 10,
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisSpacing: 10,
+                                  mainAxisSpacing: 20,
+                                  mainAxisExtent:
+                                      MediaQuery.sizeOf(context).height * .3,
+                                  crossAxisCount: 2),
+                          itemBuilder: (context, index) {
+                            return Container(
+                                width: double.infinity,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Column(
+                                  children: [
+                                    ClipRRect(
+                                        borderRadius: BorderRadius.only(
+                                            topLeft: Radius.circular(10),
+                                            topRight: Radius.circular(10)),
+                                        child: Shimmer.fromColors(
+                                          baseColor: Color.fromARGB(
+                                              255, 233, 233, 233),
+                                          highlightColor: Colors.white,
+                                          child: Container(
+                                            width: double.infinity,
+                                            height: 150,
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        )),
+                                    SizedBox(height: 10),
+                                    Shimmer.fromColors(
+                                      baseColor:
+                                          Color.fromARGB(255, 233, 233, 233),
+                                      highlightColor: Colors.white,
+                                      child: Container(
+                                        width: double.infinity,
+                                        height: 8,
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(height: 10),
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: Shimmer.fromColors(
+                                            baseColor: Color.fromARGB(
+                                                255, 233, 233, 233),
+                                            highlightColor: Colors.white,
+                                            child: Container(
+                                              // width: 100,
+                                              height: 8,
+                                              decoration: BoxDecoration(
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(width: 10),
+                                        Expanded(
+                                          child: Shimmer.fromColors(
+                                            baseColor: Color.fromARGB(
+                                                255, 233, 233, 233),
+                                            highlightColor: Colors.white,
+                                            child: Container(
+                                              // width: 100,
+                                              height: 8,
+                                              decoration: BoxDecoration(
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(height: 10),
+                                    Shimmer.fromColors(
+                                      baseColor:
+                                          Color.fromARGB(255, 233, 233, 233),
+                                      highlightColor: Colors.white,
+                                      child: Container(
+                                        width: double.infinity,
+                                        height: 8,
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ));
+                          },
+                        ));
                   }),
             ],
           ),
         ),
       ),
     );
-  }
-}
-
-class DrawerSession extends StatelessWidget {
-  const DrawerSession({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Drawer(
-        backgroundColor: Colors.white,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: 50),
-            Padding(
-              padding: const EdgeInsets.only(left: 30),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  CircleAvatar(
-                    radius: 30,
-                    backgroundImage: AssetImage("assets/images/profile.png"),
-                  ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Muneef Nk',
-                        style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.black,
-                            fontWeight: FontWeight.w500),
-                      ),
-                      Text(
-                        'muneef@gmail.com',
-                        style: TextStyle(fontSize: 12),
-                      ),
-                    ],
-                  )
-                ],
-              ),
-            ),
-            // SizedBox(height: 30),
-            Container(
-              padding: EdgeInsets.all(25),
-              child: Wrap(
-                runSpacing: 8,
-                children: [
-                  ListTile(
-                    leading: Icon(
-                      Icons.account_circle_outlined,
-                      color: ColorConstant.primaryColor,
-                    ),
-                    title: Text("Profile"),
-                    onTap: () {
-                      Navigator.of(context).pop();
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => YourProfile()));
-                    },
-                  ),
-                  ListTile(
-                    leading: Icon(
-                      Icons.bookmark_add_outlined,
-                      color: ColorConstant.primaryColor,
-                    ),
-                    title: Text("Saved"),
-                    onTap: () {
-                      Navigator.of(context).pop();
-                      // Navigator.of(context).push(MaterialPageRoute(
-                      //     builder: (context) => favourite_screeen()));
-                    },
-                  ),
-                  ListTile(
-                    leading: Icon(
-                      Icons.sell_outlined,
-                      color: ColorConstant.primaryColor,
-                    ),
-                    title: Text("My Orders"),
-                    onTap: () {
-                      Navigator.of(context).pop();
-                      // Navigator.of(context).push(MaterialPageRoute(
-                      //     builder: (context) => order_screen()));
-                    },
-                  ),
-                  ListTile(
-                    leading: Icon(
-                      Icons.group_add_outlined,
-                      color: ColorConstant.primaryColor,
-                    ),
-                    title: Text("Invites Friends"),
-                    onTap: () {
-                      final String whatsappLink = "https://your-link-here.com";
-                      Share.share("Check out this link: $whatsappLink",
-                          subject: "Share Link");
-                    },
-                  ),
-                  ListTile(
-                    leading: Icon(
-                      Icons.info_outline,
-                      color: ColorConstant.primaryColor,
-                    ),
-                    title: Text("Help Center"),
-                    onTap: () {
-                      Navigator.of(context).pop();
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => HelpCenter()));
-                    },
-                  ),
-                  ListTile(
-                    leading: Icon(
-                      Icons.security_outlined,
-                      color: ColorConstant.primaryColor,
-                    ),
-                    title: Text("Privacy Policy"),
-                    onTap: () {
-                      Navigator.of(context).pop();
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => PrivacyPolicy()));
-                    },
-                  ),
-                  ListTile(
-                    leading: Icon(
-                      Icons.logout_outlined,
-                      color: ColorConstant.primaryColor,
-                    ),
-                    title: Text("logout"),
-                    onTap: () async {
-                      await FirebaseAuth.instance.signOut();
-                      Navigator.of(context).pushAndRemoveUntil(
-                          MaterialPageRoute(
-                              builder: (context) => LoginScreen()),
-                          (route) => false);
-                    },
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ));
   }
 }

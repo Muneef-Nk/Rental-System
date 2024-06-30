@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:rent_cruise/utils/color_constant.dart/color_constant.dart';
-import 'package:rent_cruise/view/checkout_screen/Add_card_screen/add_card_screen.dart';
-import 'package:rent_cruise/view/checkout_screen/Payment_screen/Payment_screen.dart';
+import 'package:rent_cruise/checkout_screen/Add_card_screen/add_card_screen.dart';
+import 'package:rent_cruise/checkout_screen/Payment_screen/Payment_screen.dart';
 
 class PaymentMethods extends StatefulWidget {
   const PaymentMethods({Key? key}) : super(key: key);
@@ -16,7 +16,7 @@ class _PaymentMethodsState extends State<PaymentMethods> {
 
   int selectedIndex = 10;
   CollectionReference debitCard =
-      FirebaseFirestore.instance.collection('profile');
+      FirebaseFirestore.instance.collection('debitCard');
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -109,7 +109,7 @@ class _PaymentMethodsState extends State<PaymentMethods> {
               ),
             ),
             Container(
-              height: 280,
+              // height: 280,
               width: MediaQuery.of(context).size.width * 0.9,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
@@ -186,33 +186,6 @@ class _PaymentMethodsState extends State<PaymentMethods> {
                     ),
                     trailing: Radio(
                       value: 3,
-                      groupValue: _selectedPaymentOption,
-                      onChanged: (value) {
-                        setState(() {
-                          _selectedPaymentOption = value as int;
-                        });
-                      },
-                    ),
-                  ),
-                  Divider(
-                    thickness: 0.5,
-                    color: Colors.grey,
-                  ),
-                  ListTile(
-                    leading: Container(
-                      height: 30,
-                      width: 30,
-                      child: Image.network(
-                        "https://cdn.icon-icons.com/icons2/836/PNG/512/Google_icon-icons.com_66793.png",
-                        fit: BoxFit.fill,
-                      ),
-                    ),
-                    title: Text(
-                      "Phone Pay",
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    trailing: Radio(
-                      value: 4,
                       groupValue: _selectedPaymentOption,
                       onChanged: (value) {
                         setState(() {

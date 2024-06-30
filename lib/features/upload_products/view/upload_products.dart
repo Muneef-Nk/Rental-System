@@ -1,11 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:rent_cruise/features/my_products/provider/my_products_controller.dart';
 import 'package:rent_cruise/features/upload_products/provider/upload_product_controller.dart';
 import 'package:rent_cruise/utils/color_constant.dart/color_constant.dart';
 
 class UploadProducts extends StatefulWidget {
-  const UploadProducts({super.key});
+  final String? name;
+  final bool idEdit;
+  final String? documentId;
+  final String? descrition;
+  final String? price;
+  final String? mainImage;
+  final String? subImage1;
+  final String? subImage2;
+  final String? subImage3;
+  final String? subImage4;
+  const UploadProducts(
+      {super.key,
+      this.name,
+      this.documentId,
+      this.descrition,
+      this.price,
+      this.mainImage,
+      this.subImage1,
+      this.subImage2,
+      this.subImage3,
+      this.subImage4,
+      required this.idEdit});
 
   @override
   State<UploadProducts> createState() => _UploadProductsState();
@@ -19,7 +41,18 @@ class _UploadProductsState extends State<UploadProducts> {
   @override
   void initState() {
     super.initState();
-    Provider.of<UploadProductControllr>(context, listen: false).getCategoris();
+    final provider =
+        Provider.of<UploadProductControllr>(context, listen: false);
+    provider.getCategoris();
+
+    _priceController.text = widget.price ?? '';
+    _productName.text = widget.name ?? '';
+    _description.text = widget.descrition ?? '';
+    provider.mainImageUrl = widget.mainImage ?? '';
+    provider.athorImage1 = widget.subImage1 ?? '';
+    provider.athorImage2 = widget.subImage2 ?? '';
+    provider.athorImage3 = widget.subImage3 ?? '';
+    provider.athorImage4 = widget.subImage4 ?? "";
   }
 
   @override
@@ -472,34 +505,74 @@ class _UploadProductsState extends State<UploadProducts> {
               ),
             ),
             SizedBox(height: 30),
-            GestureDetector(
-              onTap: () {
-                Provider.of<UploadProductControllr>(context, listen: false)
-                    .uploadProduct(
-                        context: context,
-                        name: _productName.text,
-                        des: _description.text,
-                        price: _priceController.text);
-              },
-              child: Container(
-                width: 200,
-                height: 60,
-                decoration: BoxDecoration(
-                  color: ColorConstant.primaryColor,
-                  borderRadius: BorderRadius.circular(30),
-                ),
-                child: Center(
-                  child: Text(
-                    "Upload",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
+            widget.idEdit
+                ? GestureDetector(
+                    onTap: () {
+                      final provider = Provider.of<UploadProductControllr>(
+                          context,
+                          listen: false);
+                      Provider.of<MyProductsController>(context, listen: false)
+                          .editProduct(
+                              context: context,
+                              name: _productName.text,
+                              des: _description.text,
+                              price: _priceController.text,
+                              athorImage1: provider.athorImage1.toString(),
+                              athorImage2: provider.athorImage2.toString(),
+                              athorImage3: provider.athorImage3.toString(),
+                              athorImage4: provider.athorImage3.toString(),
+                              category: provider.dropdownvalue,
+                              documnetid: widget.documentId.toString(),
+                              mainImage: provider.mainImageUrl.toString());
+                    },
+                    child: Container(
+                      width: 200,
+                      height: 60,
+                      decoration: BoxDecoration(
+                        color: ColorConstant.primaryColor,
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      child: Center(
+                        child: Text(
+                          "Edit",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  )
+                : GestureDetector(
+                    onTap: () {
+                      Provider.of<UploadProductControllr>(context,
+                              listen: false)
+                          .uploadProduct(
+                              context: context,
+                              name: _productName.text,
+                              des: _description.text,
+                              price: _priceController.text);
+                    },
+                    child: Container(
+                      width: 200,
+                      height: 60,
+                      decoration: BoxDecoration(
+                        color: ColorConstant.primaryColor,
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      child: Center(
+                        child: Text(
+                          "Upload",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
                     ),
                   ),
-                ),
-              ),
-            ),
             SizedBox(height: 30),
           ],
         ),
