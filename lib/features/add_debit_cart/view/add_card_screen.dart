@@ -5,8 +5,8 @@ import 'package:intl/intl.dart';
 import 'package:m_toast/m_toast.dart';
 import 'package:provider/provider.dart';
 import 'package:rent_cruise/utils/color_constant.dart/color_constant.dart';
-import 'package:rent_cruise/controller/add_card/add_card_controller.dart';
-import 'package:rent_cruise/model/addCard/cardModel.dart';
+import 'package:rent_cruise/features/add_debit_cart/provider/add_card_controller.dart';
+import 'package:rent_cruise/features/add_debit_cart/model/cardModel.dart';
 
 class AddCardScreen extends StatefulWidget {
   @override

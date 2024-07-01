@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:rent_cruise/features/authentication/view/login_scrren.dart';
 import 'package:rent_cruise/features/my_products/view/my_products.dart';
 import 'package:rent_cruise/features/profile/view/yourProfile.dart';
-import 'package:rent_cruise/shared/pages/payment_methods_screen/payment_methods_screen.dart';
+import 'package:rent_cruise/features/Payment_screen/payment_methods_screen.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

@@ -1,9 +1,7 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dots_indicator/dots_indicator.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:rent_cruise/features/category/view/All_Category.dart';
 import 'package:rent_cruise/features/category/view/selected_category.dart';
@@ -11,7 +9,6 @@ import 'package:rent_cruise/features/home_screen/provider/homecontroller.dart';
 import 'package:rent_cruise/features/home_screen/widgets/drawer.dart';
 import 'package:rent_cruise/features/notification_screen/notification_screen.dart';
 import 'package:rent_cruise/features/product_detail_screen/view/product_detail_screen.dart';
-import 'package:rent_cruise/search_screen/search_screen.dart';
 import 'package:rent_cruise/utils/color_constant.dart/color_constant.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -105,8 +102,8 @@ class _HomescreenState extends State<Homescreen> {
                 children: [
                   GestureDetector(
                     onTap: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => search_screen()));
+                      // Navigator.of(context).push(MaterialPageRoute(
+                      //     builder: (context) => search_screen()));
                     },
                     child: Container(
                       margin:

@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:rent_cruise/utils/color_constant.dart/color_constant.dart';
-import 'package:rent_cruise/checkout_screen/Add_card_screen/add_card_screen.dart';
-import 'package:rent_cruise/checkout_screen/Payment_screen/Payment_screen.dart';
+import 'package:rent_cruise/features/add_debit_cart/view/add_card_screen.dart';
+import 'package:rent_cruise/features/Payment_screen/Payment_screen.dart';
 
 class PaymentMethods extends StatefulWidget {
   const PaymentMethods({Key? key}) : super(key: key);

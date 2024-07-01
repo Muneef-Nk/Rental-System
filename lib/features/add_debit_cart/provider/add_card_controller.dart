@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/widgets.dart';
-import 'package:rent_cruise/model/addCard/cardModel.dart';
+import 'package:rent_cruise/features/add_debit_cart/model/cardModel.dart';
 
 class AddCardController with ChangeNotifier {
   CollectionReference debitCard =

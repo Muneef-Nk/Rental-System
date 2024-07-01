@@ -3,7 +3,6 @@ import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:quickalert/models/quickalert_type.dart';
 import 'package:quickalert/widgets/quickalert_dialog.dart';
-import 'package:rent_cruise/controller/checkout_controller/checkout_controller.dart';
 import 'package:rent_cruise/features/cart_screen/provider/card_screen_controller.dart';
 import 'package:rent_cruise/features/cart_screen/widgets/cart_container.dart';
 import 'package:rent_cruise/utils/color_constant.dart/color_constant.dart';
@@ -13,7 +12,7 @@ class CartScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<CardScreenController>(context);
+    // final provider = Provider.of<CardScreenController>(context);
 
     return Scaffold(
         appBar: AppBar(
@@ -43,26 +42,7 @@ class CartScreen extends StatelessWidget {
               ),
               GestureDetector(
                 onTap: () {
-                  Provider.of<CheckoutController>(context, listen: false)
-                      .checkoutList = [
-                    ...Provider.of<CardScreenController>(context, listen: false)
-                        .cardlist
-                  ];
-
-                  Provider.of<CheckoutController>(context, listen: false)
-                      .checkAmmount(provider.sum);
-                  provider.sum = 0;
-
-                  if (provider.cardlist.isNotEmpty) {
-                    // Navigator.of(context).push(MaterialPageRoute(
-                    //     builder: (context) => Checkout_screen()));
-                  } else {
-                    QuickAlert.show(
-                      context: context,
-                      type: QuickAlertType.warning,
-                      text: 'You must add atleast one item in the cart',
-                    );
-                  }
+                  //
                 },
                 child: Container(
                   width: 150,
