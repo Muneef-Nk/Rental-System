@@ -1,18 +1,27 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
-import 'package:quickalert/models/quickalert_type.dart';
-import 'package:quickalert/widgets/quickalert_dialog.dart';
 import 'package:rent_cruise/features/cart_screen/provider/card_screen_controller.dart';
 import 'package:rent_cruise/features/cart_screen/widgets/cart_container.dart';
 import 'package:rent_cruise/utils/color_constant.dart/color_constant.dart';
+import 'package:shimmer/shimmer.dart';
 
-class CartScreen extends StatelessWidget {
+class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
 
   @override
+  State<CartScreen> createState() => _CartScreenState();
+}
+
+class _CartScreenState extends State<CartScreen> {
+  CollectionReference products =
+      FirebaseFirestore.instance.collection('products');
+
+  @override
   Widget build(BuildContext context) {
-    // final provider = Provider.of<CardScreenController>(context);
+    final provider = Provider.of<CardScreenController>(context);
 
     return Scaffold(
         appBar: AppBar(
@@ -64,26 +73,145 @@ class CartScreen extends StatelessWidget {
             ],
           ),
         ),
-        body: StreamBuilder(
-          stream: provider.cartStream,
-          builder: (context, snapshot) {
-            return provider.cardlist.isNotEmpty
-                ? ListView.builder(
-                    itemCount: provider.cardlist.length,
-                    itemBuilder: (context, index) {
-                      return Container(
-                        margin: EdgeInsets.only(top: 20, left: 15, right: 15),
-                        width: double.infinity,
-                        height: 160,
-                        decoration: BoxDecoration(
-                            color: Colors.grey[100],
-                            borderRadius: BorderRadius.circular(15)),
-                        child: CartContainer(index: index),
-                      );
-                    })
-                : Center(
-                    child: Lottie.asset("assets/animations/emptyList.json"));
-          },
-        ));
+        body: provider.cardlist.length == 0
+            ? Center(
+                child: Lottie.asset("assets/animations/emptyList.json"),
+              )
+            : FutureBuilder(
+                future: products
+                    .where(FieldPath.documentId, whereIn: provider.cardlist)
+                    .get(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    List cartList = snapshot.data!.docs;
+                    return ListView.builder(
+                        itemCount: cartList.length,
+                        itemBuilder: (context, index) {
+                          final cart = snapshot.data!.docs[index];
+                          return Container(
+                            margin:
+                                EdgeInsets.only(top: 20, left: 15, right: 15),
+                            width: double.infinity,
+                            height: 100,
+                            decoration: BoxDecoration(
+                                color: Colors.grey[100],
+                                borderRadius: BorderRadius.circular(15)),
+                            child: CartContainer(
+                              documentId: cart.id,
+                              image: cart['mainImage'],
+                              name: cart['name'],
+                              price: cart['price'],
+                            ),
+                          );
+                        });
+                  }
+                  return CartLoading();
+                },
+              ));
+  }
+}
+
+class CartLoading extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      itemCount: 10,
+      itemBuilder: (context, index) {
+        return Container(
+          margin: EdgeInsets.only(top: 20, left: 15, right: 15),
+          width: double.infinity,
+          height: 100,
+          decoration: BoxDecoration(
+            color: Colors.grey[100],
+            borderRadius: BorderRadius.circular(15),
+          ),
+          child: Row(
+            children: [
+              Shimmer.fromColors(
+                baseColor: Colors.grey[300]!,
+                highlightColor: Colors.grey[100]!,
+                child: Container(
+                  margin: EdgeInsets.all(8),
+                  width: 100,
+                  height: 100,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[300],
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                ),
+              ),
+              SizedBox(width: 10),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  child: Column(
+                    children: [
+                      Shimmer.fromColors(
+                        baseColor: Colors.grey[300]!,
+                        highlightColor: Colors.grey[100]!,
+                        child: Container(
+                          height: 10,
+                          decoration: BoxDecoration(
+                            color: Colors.grey[300],
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      Row(
+                        children: [
+                          Shimmer.fromColors(
+                            baseColor: Colors.grey[300]!,
+                            highlightColor: Colors.grey[100]!,
+                            child: Container(
+                              width: 100,
+                              height: 10,
+                              decoration: BoxDecoration(
+                                color: Colors.grey[300],
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 10),
+                      Shimmer.fromColors(
+                        baseColor: Colors.grey[300]!,
+                        highlightColor: Colors.grey[100]!,
+                        child: Container(
+                          // width: 100,
+                          height: 10,
+                          decoration: BoxDecoration(
+                            color: Colors.grey[300],
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      Row(
+                        children: [
+                          Shimmer.fromColors(
+                            baseColor: Colors.grey[300]!,
+                            highlightColor: Colors.grey[100]!,
+                            child: Container(
+                              width: 100,
+                              height: 10,
+                              decoration: BoxDecoration(
+                                color: Colors.grey[300],
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 }

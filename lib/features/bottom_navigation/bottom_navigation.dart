@@ -23,7 +23,7 @@ class _RootScreenState extends State<RootScreen> {
       idEdit: false,
     ),
     CartScreen(),
-    Profile()
+    Profile(),
   ];
   @override
   Widget build(BuildContext context) {

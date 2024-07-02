@@ -1,18 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 class SavedController with ChangeNotifier {
-  List savedLIst = [];
+  List<String> savedList = [];
 
-  addtoSave(int index) {
-    bool exist = savedLIst.isNotEmpty &&
-        savedLIst.any((element) => element.index == index);
-    if (exist) {
-      //
+  var box = Hive.box('favourite');
+
+  void addToSave(String documentId) {
+    if (isSaved(documentId)) {
+      savedList.remove(documentId);
+      box.delete(documentId);
+      print('Removed: $documentId');
     } else {
-      savedLIst.add(index);
-      notifyListeners();
+      savedList.add(documentId);
+      box.put(documentId, documentId);
+      print('Added: $documentId');
     }
-
     notifyListeners();
+  }
+
+  bool isSaved(String documentId) {
+    return savedList.contains(documentId);
   }
 }

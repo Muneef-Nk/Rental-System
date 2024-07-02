@@ -3,8 +3,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:rent_cruise/features/cart_screen/provider/card_screen_controller.dart';
 import 'package:rent_cruise/features/category/view/All_Category.dart';
 import 'package:rent_cruise/features/category/view/selected_category.dart';
+import 'package:rent_cruise/features/favourite_screen/provider/saved_controller.dart';
 import 'package:rent_cruise/features/home_screen/provider/homecontroller.dart';
 import 'package:rent_cruise/features/home_screen/widgets/drawer.dart';
 import 'package:rent_cruise/features/notification_screen/notification_screen.dart';
@@ -370,7 +372,7 @@ class _HomescreenState extends State<Homescreen> {
                                   crossAxisSpacing: 10,
                                   mainAxisSpacing: 20,
                                   mainAxisExtent:
-                                      MediaQuery.sizeOf(context).height * .3,
+                                      MediaQuery.sizeOf(context).height * .32,
                                   crossAxisCount: 2),
                           itemBuilder: (context, index) {
                             DocumentSnapshot product =
@@ -391,32 +393,56 @@ class _HomescreenState extends State<Homescreen> {
                                       color: Colors.black12),
                                   child: Column(
                                     children: [
-                                      Stack(
-                                        children: [
-                                          ClipRRect(
-                                            borderRadius: BorderRadius.only(
-                                                topLeft: Radius.circular(10),
-                                                topRight: Radius.circular(10)),
-                                            child: Image.network(
-                                              product['mainImage'],
-                                              height: 150,
-                                              fit: BoxFit.cover,
-                                              width: double.infinity,
-                                            ),
-                                          ),
-                                          Align(
-                                            alignment: Alignment.topRight,
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.all(8.0),
-                                              child: Icon(
-                                                Icons.bookmark_outline,
-                                                size: 28,
+                                      Consumer<SavedController>(
+                                          builder: (context, provider, _) {
+                                        bool isSaved = provider.isSaved(snapshot
+                                            .data!.docs[index].id
+                                            .toString());
+                                        return Stack(
+                                          children: [
+                                            ClipRRect(
+                                              borderRadius: BorderRadius.only(
+                                                  topLeft: Radius.circular(10),
+                                                  topRight:
+                                                      Radius.circular(10)),
+                                              child: Image.network(
+                                                product['mainImage'],
+                                                height: 150,
+                                                fit: BoxFit.cover,
+                                                width: double.infinity,
                                               ),
                                             ),
-                                          )
-                                        ],
-                                      ),
+                                            Align(
+                                              alignment: Alignment.topRight,
+                                              child: InkWell(
+                                                onTap: () {
+                                                  Provider.of<SavedController>(
+                                                          context,
+                                                          listen: false)
+                                                      .addToSave(snapshot
+                                                          .data!.docs[index].id
+                                                          .toString());
+                                                },
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(8.0),
+                                                  child: isSaved
+                                                      ? Icon(
+                                                          Icons.bookmark,
+                                                          color: Colors.red,
+                                                          size: 28,
+                                                        )
+                                                      : Icon(
+                                                          Icons
+                                                              .bookmark_outline,
+                                                          size: 28,
+                                                        ),
+                                                ),
+                                              ),
+                                            )
+                                          ],
+                                        );
+                                      }),
                                       Align(
                                           alignment: Alignment.centerLeft,
                                           child: Padding(
@@ -439,10 +465,39 @@ class _HomescreenState extends State<Homescreen> {
                                                   fontSize: 18,
                                                   fontWeight: FontWeight.bold),
                                             ),
-                                            Icon(
-                                              Icons.shopping_cart_outlined,
-                                              size: 25,
-                                            )
+                                            Consumer<CardScreenController>(
+                                                builder:
+                                                    (context, provider, _) {
+                                              bool isAddedCart =
+                                                  provider.isSaved(
+                                                snapshot.data!.docs[index].id
+                                                    .toString(),
+                                              );
+                                              return InkWell(
+                                                onTap: () {
+                                                  provider.addToCart(
+                                                      snapshot
+                                                          .data!.docs[index].id
+                                                          .toString(),
+                                                      context);
+                                                },
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(5),
+                                                  child: isAddedCart
+                                                      ? Icon(
+                                                          Icons.shopping_cart,
+                                                          color: Colors.green,
+                                                          size: 25,
+                                                        )
+                                                      : Icon(
+                                                          Icons
+                                                              .shopping_cart_outlined,
+                                                          size: 25,
+                                                        ),
+                                                ),
+                                              );
+                                            })
                                           ],
                                         ),
                                       ),

@@ -1,89 +1,68 @@
-// import 'dart:async';
+import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
-// import 'package:flutter/material.dart';
+import 'package:top_snackbar_flutter/custom_snack_bar.dart';
+import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
-// import 'package:top_snackbar_flutter/custom_snack_bar.dart';
-// import 'package:top_snackbar_flutter/top_snack_bar.dart';
+class CardScreenController with ChangeNotifier {
+  List cardlist = [];
+  bool exist = false;
+  double sum = 0;
 
-// class CardScreenController with ChangeNotifier {
-//   List<CheckoutCartModel> cardlist = [];
-//   bool exist = false;
-//   double sum = 0;
+  var box = Hive.box('cart');
 
-//   final _cartController = StreamController<List<CheckoutCartModel>>.broadcast();
+  void addToCart(String documentId, BuildContext context) {
+    if (isSaved(documentId)) {
+      cardlist.remove(documentId);
+      box.delete(documentId);
+      print('Removed: $documentId');
+    } else {
+      cardlist.add(documentId);
+      box.put(documentId, documentId);
+      showTopSnackBar(
+        animationDuration: Duration(seconds: 1),
+        displayDuration: Duration(milliseconds: 2),
+        Overlay.of(context),
+        CustomSnackBar.success(
+          message: "Product Successfully Added to Cart",
+        ),
+      );
+    }
+    notifyListeners();
+  }
 
-//   Stream<List<CheckoutCartModel>> get cartStream => _cartController.stream;
+  bool isSaved(String documentId) {
+    return cardlist.contains(documentId);
+  }
 
-//   void dispose() {
-//     super.dispose();
-//     _cartController.close();
-//   }
+//delete product from the cart list
+  deleteProduct(String documentId, BuildContext context) {
+    cardlist.remove(documentId);
+    box.delete(documentId);
+    showTopSnackBar(
+      animationDuration: Duration(seconds: 1),
+      displayDuration: Duration(milliseconds: 2),
+      Overlay.of(context),
+      CustomSnackBar.error(
+        message: "Product removed from Cart",
+      ),
+    );
+    notifyListeners();
+  }
 
-// // if product already have list product not saved if no product added to the list
-//   addProductToCart({
-//     required String id,
-//     required int index,
-//     required BuildContext context,
-//     required int categoryIndex,
-//     required bool isDirectHome,
-//     required String totalPrice,
-//     required String selectedDays,
-//     required String price,
-//   }) {
-//     if (exist) {
-//       showTopSnackBar(
-//         animationDuration: Duration(seconds: 1),
-//         displayDuration: Duration(milliseconds: 2),
-//         Overlay.of(context),
-//         CustomSnackBar.info(
-//           message: " Product Already Added to Cart",
-//         ),
-//       );
-//       notifyListeners();
-//     } else {
-//       // cardlist.add(CheckoutCartModel(
-//       //   id: id,
-//       //   img: isDirectHome ? product.imgMain : ctProducts.imgMain,
-//       //   name: isDirectHome ? product.productName : ctProducts.productName,
-//       //   totalPrice: totalPrice,
-//       //   selectedDays: selectedDays,
-//       //   perdayprice: price,
-//       // ));
+  // calculateAllProductPrice() {
+  //   cardlist.forEach(
+  //     (element) {
+  //       sum += double.parse(element.totalPrice);
+  //       notifyListeners();
+  //     },
+  //   );
+  //   notifyListeners();
+  // }
 
-//       showTopSnackBar(
-//         animationDuration: Duration(seconds: 1),
-//         displayDuration: Duration(milliseconds: 2),
-//         Overlay.of(context),
-//         CustomSnackBar.success(
-//           message: "Product Successfully Added to Cart",
-//         ),
-//       );
+  calculateAfterDeletedProductPrice(double price) {
+    sum = sum - price;
 
-//       calculateAllProductPrice();
-//       notifyListeners();
-//     }
-//     notifyListeners();
-//   }
-
-// //delete product from the cart list
-//   deleteProduct(int index) {
-//     cardlist.removeAt(index);
-//     notifyListeners();
-//   }
-
-//   calculateAllProductPrice() {
-//     cardlist.forEach(
-//       (element) {
-//         sum += double.parse(element.totalPrice);
-//         notifyListeners();
-//       },
-//     );
-//     notifyListeners();
-//   }
-
-//   calculateAfterDeletedProductPrice(double price) {
-//     sum = sum - price;
-
-//     notifyListeners();
-//   }
-// }
+    notifyListeners();
+  }
+}

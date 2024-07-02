@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:rent_cruise/features/authentication/view/login_scrren.dart';
+import 'package:rent_cruise/features/favourite_screen/view/favourite_screen.dart';
 import 'package:rent_cruise/features/profile/view/yourProfile.dart';
 import 'package:rent_cruise/utils/color_constant.dart/color_constant.dart';
 import 'package:share_plus/share_plus.dart';
@@ -139,8 +140,8 @@ class _DrawerSessionState extends State<DrawerSession> {
                     title: Text("Saved"),
                     onTap: () {
                       Navigator.of(context).pop();
-                      // Navigator.of(context).push(MaterialPageRoute(
-                      //     builder: (context) => favourite_screeen()));
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => FavouriteScreeen()));
                     },
                   ),
                   ListTile(
