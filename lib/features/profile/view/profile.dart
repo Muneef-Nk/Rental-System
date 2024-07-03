@@ -274,11 +274,18 @@ class _ProfileState extends State<Profile> {
                     Divider(),
                     InkWell(
                       onTap: () async {
-                        await FirebaseAuth.instance.signOut().then((value) =>
-                            Navigator.of(context).pushAndRemoveUntil(
-                                MaterialPageRoute(
-                                    builder: (context) => LoginScreen()),
-                                (route) => false));
+                        await FirebaseAuth.instance
+                            .signOut()
+                            .then((value) async {
+                          final SharedPreferences prefs =
+                              await SharedPreferences.getInstance();
+                          await prefs.setBool('isLogin', true);
+
+                          return Navigator.of(context).pushAndRemoveUntil(
+                              MaterialPageRoute(
+                                  builder: (context) => LoginScreen()),
+                              (route) => false);
+                        });
                       },
                       child: ListTile(
                         trailing: Icon(Icons.arrow_forward),

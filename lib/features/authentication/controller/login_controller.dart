@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:rent_cruise/features/home_screen/view/home_screen.dart';
+import 'package:rent_cruise/features/bottom_navigation/bottom_navigation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../utils/helper_function/helper_function.dart';
@@ -25,9 +25,11 @@ class LoginScreenController with ChangeNotifier {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.setString('uid', userCredential.user!.uid);
 
+      await prefs.setBool('isLogin', true);
+
       showSnackBar("Successful Loggedin", context);
       Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (context) => Homescreen()),
+          MaterialPageRoute(builder: (context) => RootScreen()),
           (route) => false);
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {

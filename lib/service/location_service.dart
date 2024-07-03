@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:rent_cruise/service/location_name.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LocationProvider with ChangeNotifier {
   Position? currentPosition;
@@ -44,6 +45,12 @@ class LocationProvider with ChangeNotifier {
 
       currentPosition = await Geolocator.getCurrentPosition();
       print("Current position: $currentPosition");
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+      await prefs.setDouble('latitude', currentPosition!.latitude);
+      await prefs.setDouble('longitude', currentPosition!.longitude);
+
+      await prefs.setBool('isLogin', true);
 
       currentLocation = await _locationService.getLocationName(currentPosition);
       print("Current name: $currentLocation");

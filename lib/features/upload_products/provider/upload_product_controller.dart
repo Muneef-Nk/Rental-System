@@ -133,6 +133,9 @@ class UploadProductControllr with ChangeNotifier {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     var uid = await prefs.getString('uid');
 
+    var lat = await prefs.getDouble('latitude');
+    var long = await prefs.getDouble('longitude');
+
     products.add({
       'name': name,
       'description': des,
@@ -144,8 +147,8 @@ class UploadProductControllr with ChangeNotifier {
       'athorImage4': athorImage4,
       'category': dropdownvalue,
       'userId': uid,
-      'lat': 0,
-      'long': 0,
+      'lat': lat,
+      'long': long,
     }).then((value) {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text("product added")));

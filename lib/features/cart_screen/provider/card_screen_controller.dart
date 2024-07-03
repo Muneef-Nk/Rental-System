@@ -11,6 +11,11 @@ class CardScreenController with ChangeNotifier {
 
   var box = Hive.box('cart');
 
+  getCartProduct() {
+    cardlist = box.get("cartDocument") ?? [];
+    notifyListeners();
+  }
+
   void addToCart(String documentId, BuildContext context) {
     if (isSaved(documentId)) {
       cardlist.remove(documentId);
@@ -18,7 +23,7 @@ class CardScreenController with ChangeNotifier {
       print('Removed: $documentId');
     } else {
       cardlist.add(documentId);
-      box.put(documentId, documentId);
+      box.put('cartDocument', cardlist);
       showTopSnackBar(
         animationDuration: Duration(seconds: 1),
         displayDuration: Duration(milliseconds: 2),

@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import 'package:rent_cruise/features/favourite_screen/provider/saved_controller.dart';
 import 'package:rent_cruise/features/favourite_screen/widgets/saved_product_loading.dart';
 import 'package:rent_cruise/features/product_detail_screen/view/product_detail_screen.dart';
-import 'package:shimmer/shimmer.dart';
 
 class FavouriteScreeen extends StatefulWidget {
   FavouriteScreeen({super.key});
@@ -14,6 +13,12 @@ class FavouriteScreeen extends StatefulWidget {
 }
 
 class _FavouriteScreeenState extends State<FavouriteScreeen> {
+  @override
+  void initState() {
+    super.initState();
+    Provider.of<SavedController>(context, listen: false).getSavedList();
+  }
+
   CollectionReference products =
       FirebaseFirestore.instance.collection('products');
 

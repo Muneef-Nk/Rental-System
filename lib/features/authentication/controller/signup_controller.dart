@@ -26,6 +26,7 @@ class SignupController with ChangeNotifier {
 
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.setString('uid', userCredential.user!.uid);
+      await prefs.setBool('isLogin', true);
 
       showSnackBar("Registration successful", context);
 

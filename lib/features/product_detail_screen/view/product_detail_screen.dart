@@ -1,13 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
+import 'package:rent_cruise/features/Payment_screen/payment_methods_screen.dart';
+import 'package:rent_cruise/features/cart_screen/provider/card_screen_controller.dart';
+import 'package:rent_cruise/features/cart_screen/view/cart_screen.dart';
+import 'package:rent_cruise/features/favourite_screen/provider/saved_controller.dart';
 import 'package:rent_cruise/features/product_detail_screen/controller/details_screen_controller.dart';
 import 'package:rent_cruise/utils/color_constant.dart/color_constant.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:top_snackbar_flutter/custom_snack_bar.dart';
-import 'package:top_snackbar_flutter/top_snack_bar.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ProductDetailsScreen extends StatefulWidget {
@@ -28,6 +29,8 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   void initState() {
     super.initState();
     fetchData();
+
+    Provider.of<CardScreenController>(context, listen: false).getCartProduct();
     getUid();
   }
 
@@ -43,8 +46,6 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // final checkoutController = Provider.of<CheckoutController>(context);
-    // final cardController = Provider.of<CardScreenController>(context);
     final detailController = Provider.of<ProductDetailsController>(context);
 
     return SafeArea(
@@ -110,90 +111,77 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               Positioned(
                                 right: 30,
                                 top: 15,
-                                child: GestureDetector(
-                                  onTap: () {
-                                    // detailController.totalPriceCalc(widget.index);
-                                    // print("cliced");
-                                    // Provider.of<CardScreenController>(context,
-                                    //         listen: false)
-                                    //     .addProductToCart(
-                                    //         index: widget.index,
-                                    //         id: widget.isDirecthome
-                                    //             ? product.id.toString()
-                                    //             : ctProducts.id.toString(),
-                                    //         isDirectHome: widget.isDirecthome,
-                                    //         context: context,
-                                    //         price: widget.isDirecthome
-                                    //             ? product.price.toString()
-                                    //             : ctProducts.price.toString(),
-                                    //         selectedDays:
-                                    //             detailController.totalDays.toString(),
-                                    //         totalPrice:
-                                    //             detailController.totalPrice.toString(),
-                                    //         categoryIndex: widget.categoryIndex);
-
-                                    // Provider.of<CardScreenController>(context,
-                                    //             listen: false)
-                                    //         .exist
-                                    //     ? 0
-                                    //     : Provider.of<CardScreenController>(context,
-                                    //             listen: false)
-                                    //         .calculateAllProductPrice();
-                                  },
-                                  child: Stack(
-                                    children: [
-                                      CircleAvatar(
-                                        radius: 20,
-                                        child: Center(
-                                          child: Icon(Icons.shopping_cart,
-                                              size: 20, color: Colors.white),
-                                        ),
-                                        backgroundColor:
-                                            ColorConstant.primaryColor,
-                                      ),
-                                      Positioned(
-                                        right: 0,
-                                        child: Container(
-                                          width: 18,
-                                          height: 18,
-                                          decoration: BoxDecoration(
-                                              color: const Color.fromRGBO(
-                                                  244, 67, 54, 1),
-                                              shape: BoxShape.circle),
+                                child: Consumer<CardScreenController>(
+                                    builder: (context, provider, _) {
+                                  return GestureDetector(
+                                    onTap: () {
+                                      Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  CartScreen()));
+                                    },
+                                    child: Stack(
+                                      children: [
+                                        CircleAvatar(
+                                          radius: 20,
                                           child: Center(
-                                              child: Text(
-                                            "6",
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.bold),
-                                          )),
+                                            child: Icon(Icons.shopping_cart,
+                                                size: 20, color: Colors.white),
+                                          ),
+                                          backgroundColor:
+                                              ColorConstant.primaryColor,
                                         ),
-                                      )
-                                    ],
-                                  ),
-                                ),
+                                        provider.cardlist.length != 0
+                                            ? Positioned(
+                                                right: 0,
+                                                child: Container(
+                                                  width: 18,
+                                                  height: 18,
+                                                  decoration: BoxDecoration(
+                                                      color:
+                                                          const Color.fromRGBO(
+                                                              244, 67, 54, 1),
+                                                      shape: BoxShape.circle),
+                                                  child: Center(
+                                                      child: Text(
+                                                    "${provider.cardlist.length}",
+                                                    style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  )),
+                                                ),
+                                              )
+                                            : SizedBox()
+                                      ],
+                                    ),
+                                  );
+                                }),
                               ),
                               Positioned(
                                 right: 80,
                                 top: 15,
                                 child: GestureDetector(
                                   onTap: () {
-                                    showTopSnackBar(
-                                        animationDuration: Duration(seconds: 1),
-                                        displayDuration:
-                                            Duration(milliseconds: 2),
-                                        Overlay.of(context),
-                                        CustomSnackBar.success(
-                                          message: " Product  saved",
-                                        ));
+                                    Provider.of<SavedController>(context,
+                                            listen: false)
+                                        .addToSave(widget.documentId);
                                   },
                                   child: CircleAvatar(
                                     radius: 20,
-                                    child: Icon(
-                                      Icons.favorite_border,
-                                      size: 20,
-                                      color: Colors.white,
-                                    ),
+                                    child: Provider.of<SavedController>(context,
+                                                listen: false)
+                                            .isSaved(widget.documentId)
+                                        ? Icon(
+                                            Icons.bookmark,
+                                            size: 20,
+                                            color: Colors.red,
+                                          )
+                                        : Icon(
+                                            Icons.bookmark_outline,
+                                            size: 20,
+                                            color: Colors.white,
+                                          ),
                                     backgroundColor: ColorConstant.primaryColor,
                                   ),
                                 ),
@@ -234,7 +222,47 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                         ],
                       );
                     }
-                    return CircularProgressIndicator();
+                    return Column(
+                      children: [
+                        Shimmer.fromColors(
+                          baseColor: Color.fromARGB(255, 233, 233, 233),
+                          highlightColor: Colors.white,
+                          child: Container(
+                            width: double.infinity,
+                            height: 300,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 15,
+                        ),
+                        Shimmer.fromColors(
+                          baseColor: Color.fromARGB(255, 233, 233, 233),
+                          highlightColor: Colors.white,
+                          child: Container(
+                            width: double.infinity,
+                            height: 8,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 5),
+                        Shimmer.fromColors(
+                          baseColor: Color.fromARGB(255, 233, 233, 233),
+                          highlightColor: Colors.white,
+                          child: Container(
+                            width: double.infinity,
+                            height: 8,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
                   }),
               Divider(
                 color: Colors.grey,
@@ -308,11 +336,75 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                           ),
                         ),
                       );
-                    } else if (snapshot.hasError) {
-                      return Text("error");
                     }
 
-                    return CircularProgressIndicator();
+                    return ListTile(
+                      leading: Shimmer.fromColors(
+                        baseColor: Color.fromARGB(255, 233, 233, 233),
+                        highlightColor: Colors.white,
+                        child: Container(
+                          width: 50,
+                          height: 50,
+                          decoration: BoxDecoration(
+                              color: Colors.white, shape: BoxShape.circle),
+                        ),
+                      ),
+                      title: Shimmer.fromColors(
+                        baseColor: Color.fromARGB(255, 233, 233, 233),
+                        highlightColor: Colors.white,
+                        child: Container(
+                          width: double.infinity,
+                          height: 8,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                      subtitle: Shimmer.fromColors(
+                        baseColor: Color.fromARGB(255, 233, 233, 233),
+                        highlightColor: Colors.white,
+                        child: Container(
+                          width: double.infinity,
+                          height: 8,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                      trailing: Container(
+                        width: 90,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Shimmer.fromColors(
+                              baseColor: Color.fromARGB(255, 233, 233, 233),
+                              highlightColor: Colors.white,
+                              child: Container(
+                                width: 50,
+                                height: 50,
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    shape: BoxShape.circle),
+                              ),
+                            ),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Shimmer.fromColors(
+                              baseColor: Color.fromARGB(255, 233, 233, 233),
+                              highlightColor: Colors.white,
+                              child: Container(
+                                width: 50,
+                                height: 50,
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    shape: BoxShape.circle),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
                   }),
               Divider(
                 color: Colors.grey,
@@ -431,8 +523,54 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               ],
                             );
                     }
-                    return Center(
-                      child: CircularProgressIndicator(),
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Shimmer.fromColors(
+                          baseColor: Color.fromARGB(255, 233, 233, 233),
+                          highlightColor: Colors.white,
+                          child: Container(
+                            width: 80,
+                            height: 80,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                        Shimmer.fromColors(
+                          baseColor: Color.fromARGB(255, 233, 233, 233),
+                          highlightColor: Colors.white,
+                          child: Container(
+                            width: 80,
+                            height: 80,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                        Shimmer.fromColors(
+                          baseColor: Color.fromARGB(255, 233, 233, 233),
+                          highlightColor: Colors.white,
+                          child: Container(
+                            width: 80,
+                            height: 80,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                        Shimmer.fromColors(
+                          baseColor: Color.fromARGB(255, 233, 233, 233),
+                          highlightColor: Colors.white,
+                          child: Container(
+                            width: 80,
+                            height: 80,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                            ),
+                          ),
+                        )
+                      ],
                     );
                   }),
               SizedBox(
@@ -619,33 +757,8 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
               ),
               InkWell(
                 onTap: () {
-                  // Navigator.of(context).push(MaterialPageRoute(
-                  //     builder: (context) => Checkout_screen()));
-                  // Provider.of<CheckoutController>(context, listen: false)
-                  //     .checkAmmount(detailController.totalPrice!);
-                  // if (checkoutController.checkoutList
-                  //     .any((e) => e.id == widget.index)) {
-                  //   print('already exist');
-                  //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  //       backgroundColor: Colors.orange,
-                  //       content:
-                  //           Text("this item already selected for checkout")));
-                  // } else {
-                  // Provider.of<CheckoutController>(context, listen: false)
-                  //     .addProduct(CheckoutCartModel(
-                  //   id: widget.index.toString(),
-                  //   img: widget.isDirecthome
-                  //       ? product.imgMain
-                  //       : ctProducts.imgMain,
-                  //   name: widget.isDirecthome
-                  //       ? product.productName
-                  //       : ctProducts.productName,
-                  //   totalPrice: detailController.totalPrice.toString(),
-                  //   selectedDays: detailController.totalDays.toString(),
-                  //   perdayprice:
-                  //      ''
-                  // ));
-                  // }
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => PaymentMethods()));
                 },
                 child: Container(
                   height: 40,

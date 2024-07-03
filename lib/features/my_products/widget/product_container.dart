@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:rent_cruise/features/my_products/provider/my_products_controller.dart';
 import 'package:rent_cruise/features/product_detail_screen/view/product_detail_screen.dart';

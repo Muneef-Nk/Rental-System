@@ -1,10 +1,12 @@
 import 'package:circle_nav_bar/circle_nav_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:rent_cruise/features/cart_screen/view/cart_screen.dart';
-import 'package:rent_cruise/features/chat_screen/chat_screen.dart';
 import 'package:rent_cruise/features/home_screen/view/home_screen.dart';
+import 'package:rent_cruise/features/my_products/view/my_products.dart';
 import 'package:rent_cruise/features/profile/view/profile.dart';
 import 'package:rent_cruise/features/upload_products/view/upload_products.dart';
+import 'package:rent_cruise/service/location_service.dart';
 import 'package:rent_cruise/utils/color_constant.dart/color_constant.dart';
 
 class RootScreen extends StatefulWidget {
@@ -15,10 +17,17 @@ class RootScreen extends StatefulWidget {
 }
 
 class _RootScreenState extends State<RootScreen> {
+  @override
+  void initState() {
+    super.initState();
+
+    Provider.of<LocationProvider>(context, listen: false).determinePosition();
+  }
+
   int _currentIndex = 0;
   List screens = [
     Homescreen(),
-    ChatScreen(),
+    MyProductsScreeen(),
     UploadProducts(
       idEdit: false,
     ),
@@ -31,7 +40,7 @@ class _RootScreenState extends State<RootScreen> {
       bottomNavigationBar: CircleNavBar(
         activeIcons: [
           Icon(Icons.person, color: Colors.black),
-          Icon(Icons.chat, color: Colors.black),
+          Icon(Icons.inventory, color: Colors.black),
           Icon(
             Icons.add,
             color: Colors.black,
@@ -46,7 +55,7 @@ class _RootScreenState extends State<RootScreen> {
             style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
           ),
           Text(
-            "Chat ",
+            "Products ",
             style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
           ),
           Text(

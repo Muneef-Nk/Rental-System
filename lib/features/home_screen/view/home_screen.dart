@@ -11,6 +11,7 @@ import 'package:rent_cruise/features/home_screen/provider/homecontroller.dart';
 import 'package:rent_cruise/features/home_screen/widgets/drawer.dart';
 import 'package:rent_cruise/features/notification_screen/notification_screen.dart';
 import 'package:rent_cruise/features/product_detail_screen/view/product_detail_screen.dart';
+import 'package:rent_cruise/features/search_screen/view/search_screen.dart';
 import 'package:rent_cruise/utils/color_constant.dart/color_constant.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -63,19 +64,6 @@ class _HomescreenState extends State<Homescreen> {
           actions: [
             GestureDetector(
               onTap: () {
-                //
-              },
-              child: Icon(
-                Icons.location_on,
-                color: Colors.black,
-              ),
-            ),
-            SizedBox(
-              width: 10,
-            ),
-            GestureDetector(
-              onTap: () {
-                //
                 Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) => NotificationScreen()));
               },
@@ -104,8 +92,8 @@ class _HomescreenState extends State<Homescreen> {
                 children: [
                   GestureDetector(
                     onTap: () {
-                      // Navigator.of(context).push(MaterialPageRoute(
-                      //     builder: (context) => search_screen()));
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => SearchScreen()));
                     },
                     child: Container(
                       margin:

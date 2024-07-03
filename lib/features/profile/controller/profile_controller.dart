@@ -4,8 +4,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:rent_cruise/features/bottom_navigation/bottom_navigation.dart';
 import 'package:rent_cruise/utils/helper_function/helper_function.dart';
-import 'package:rent_cruise/features/home_screen/view/home_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileControllr with ChangeNotifier {
@@ -50,7 +50,7 @@ class ProfileControllr with ChangeNotifier {
     });
 
     Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(builder: (context) => Homescreen()),
+      MaterialPageRoute(builder: (context) => RootScreen()),
       (route) => false,
     );
     showSnackBar('Profile added', context);

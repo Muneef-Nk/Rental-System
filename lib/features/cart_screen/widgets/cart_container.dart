@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:panara_dialogs/panara_dialogs.dart';
 import 'package:provider/provider.dart';
 import 'package:rent_cruise/features/cart_screen/provider/card_screen_controller.dart';
-import 'package:rent_cruise/utils/color_constant.dart/color_constant.dart';
 
 class CartContainer extends StatelessWidget {
   final String documentId;

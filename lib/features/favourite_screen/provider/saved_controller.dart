@@ -4,6 +4,13 @@ import 'package:hive_flutter/hive_flutter.dart';
 class SavedController with ChangeNotifier {
   List<String> savedList = [];
 
+  getSavedList() {
+    var box = Hive.box('favourite');
+    savedList = box.get("documents");
+    print(savedList);
+    notifyListeners();
+  }
+
   var box = Hive.box('favourite');
 
   void addToSave(String documentId) {
@@ -13,8 +20,7 @@ class SavedController with ChangeNotifier {
       print('Removed: $documentId');
     } else {
       savedList.add(documentId);
-      box.put(documentId, documentId);
-      print('Added: $documentId');
+      box.put('documents', savedList);
     }
     notifyListeners();
   }
