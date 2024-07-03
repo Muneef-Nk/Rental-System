@@ -7,13 +7,10 @@ screenshots
 <img src="https://github.com/Muneef-Nk/urban_lease/assets/92105703/e276d6f2-8e18-4e3f-8a49-61728d085809" width="200" height="400"/>
 <img src="https://github.com/Muneef-Nk/urban_lease/assets/92105703/59ac5a1d-1380-465c-b2d9-2e31c8ea2143" width="200" height="400"/>
 <img src="https://github.com/Muneef-Nk/urban_lease/assets/92105703/7f9338ff-96f2-489b-b5d4-bce53bc8112e" width="200" height="400"/>
-<img src="https://github.com/Muneef-Nk/urban_lease/assets/92105703/bb2e400b-3ea2-4cd9-b9f9-3c5e10070bd6" width="200" height="400"/>
 <img src="https://github.com/Muneef-Nk/urban_lease/assets/92105703/a35c5548-4923-44a4-9608-6b6b51f57df5" width="200" height="400"/>
 <img src="https://github.com/Muneef-Nk/urban_lease/assets/92105703/aa1573ac-77d4-437e-a523-25cbcd6b7703" width="200" height="400"/>
 <img src="https://github.com/Muneef-Nk/urban_lease/assets/92105703/50dac1d9-3175-4a7c-91a2-a50fbada89d5" width="200" height="400"/>
-<img src="https://github.com/Muneef-Nk/urban_lease/assets/92105703/d41eeca1-ebbe-4f7f-943c-ccc84a94189d" width="200" height="400"/>
 <img src="https://github.com/Muneef-Nk/urban_lease/assets/92105703/05a91217-75fc-4041-9415-b8e3c738309f" width="200" height="400"/>
-<img src="https://github.com/Muneef-Nk/urban_lease/assets/92105703/ea91baf2-6797-49d6-8d69-de9560d8eb62" width="200" height="400"/>
 <img src="https://github.com/Muneef-Nk/urban_lease/assets/92105703/46ee654e-2f48-48f1-95b5-b75ed0f4ceda" width="200" height="400"/>
 <img src="https://github.com/Muneef-Nk/urban_lease/assets/92105703/aaabf956-e961-43d4-b158-bf4ce4ee0de5" width="200" height="400"/>
 <img src="https://github.com/Muneef-Nk/urban_lease/assets/92105703/2440a1e7-518c-454c-b21c-6a25319c7d86" width="200" height="400"/>
